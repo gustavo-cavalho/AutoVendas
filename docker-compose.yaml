@@ -1,0 +1,63 @@
+services:
+  db:
+    image: mysql:8.4
+    container_name: db_autoVendas
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_USER=${DB_USER_NAME}
+      - MYSQL_PASSWORD=${DB_USER_PASSWORD}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - net_vendas
+    volumes:
+      - autoVendas_data:/var/lib/mysql
+  
+  php:
+    container_name: php_autoVendas
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./:/var/www/auto_vendas
+    networks:
+      - net_vendas
+    command: >
+      sh -c "composer install &&
+        php bin/console doctrine:migrations:migrate --no-interaction &&
+        php-fpm"
+    healthcheck:
+      test: ["CMD", "php-fpm", "-t"]
+      interval: 10s
+      retries: 3
+      start_period: 10s
+
+  web_server:
+    container_name: web_server_autoVendas
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/auto_vendas
+    networks:
+      - net_vendas
+    depends_on:
+      php:
+        condition: service_healthy
+
+networks:
+  net_vendas:
+
+volumes:
+  autoVendas_data:
