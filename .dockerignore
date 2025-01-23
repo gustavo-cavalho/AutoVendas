@@ -1,0 +1,21 @@
+# Controle de versão
+.git
+.gitignore
+
+# Dependências
+/vendor
+
+# Configurações locais
+.env
+.env.local
+.env.*.local
+
+# Logs e arquivos temporários
+/var/cache/*
+/var/log/*
+/tmp
+
+# Outras pastas irrelevantes para o build
+/tests
+/docs
+/docker
