@@ -3,31 +3,22 @@
 namespace App\ValueObject;
 
 use App\Interfaces\ValueObjectInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class Password implements ValueObjectInterface
 {
   private string $password;
-  private ?UserPasswordHasherInterface $passwordHasher;
 
-  function __construct(string $password, ?UserPasswordHasherInterface $passwordHasher = null)
+  function __construct(string $password)
   {
     $this->password = $password;
-    $this->passwordHasher = $passwordHasher;
   }
 
   /**
-   * Convert the objects in a format that the entity reconize and if needed
-   * do some action.
-   * @example -- hashes a password before return it.
    * @see ValueObjectInterface
    */
   function processToEntity(): string
   {
-    $hashedPassword = $this->passwordHasher->hashPassword($this->password);
-    $this->password = $hashedPassword;
-
-    return $hashedPassword;
+    return $this->password;
   }
   
   /**
