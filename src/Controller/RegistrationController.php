@@ -3,82 +3,65 @@
 namespace App\Controller;
 
 use App\DTO\UserDTO;
+use App\Exceptions\IdentityAlreadyExistsException;
+use App\Exceptions\ValidationException;
+use App\Interfaces\RegistrationsServiceInterface;
+use App\Interfaces\SerializerInterface;
 use App\Repository\UserRepository;
+use App\Service\UserRegistrationService;
+use App\Service\UserSerializerService;
+use App\Traits\JsonResponseUtil;
 use App\ValueObject\Email;
 use App\ValueObject\Password;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface as SymfonySerializerInterface;
 
 class RegistrationController extends AbstractController
 {
-    private UserRepository $userRepository;
+    use JsonResponseUtil;
 
-    function __construct(UserRepository $userRepository)
-    {
-        $this->userRepository = $userRepository;
+    private RegistrationsServiceInterface $registrationsService;
+    private SerializerInterface $serializer;
+
+    function __construct(
+        UserRepository $userRepository,
+        UserPasswordHasherInterface $passwordHasher,
+        SymfonySerializerInterface $serializer
+        ) {
+        $this->registrationsService = new UserRegistrationService($userRepository, $passwordHasher);
+        $this->serializer = new UserSerializerService($serializer);
     }
 
     /**
      * @Route("/register", name="user_registration", methods={"POST"})
      */
-    public function register(Request $request, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    public function register(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         if (!$data) {
-            return $this->json(
-                [
-                    'message' => 'No data'
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
+            return $this->errBadRequest('Invalid data');
         }
 
         $userDTO = new UserDTO(
             new Email($data['email']),
             new Password($data['password']),
         );
-
-        $err = $userDTO->validate();
-        if ($err) {
-            return $this->json(
-                [
-                    'message' => 'Invalid data',
-                    'errors' => $err
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
+        
+        try {
+            $userDTO->validate();
+            $user = $this->registrationsService->register($userDTO);
+        } catch (ValidationException $e) {
+            return $this->errBadRequest($e->getMessage(), $e->getErrors());
+        } catch (IdentityAlreadyExistsException $e) {
+            return $this->errBadRequest($e->getMessage());
         }
 
-        $user = $this->userRepository->findByEmail($userDTO->getEmail());
-        if ($user) {
-            return $this->json(
-                [
-                    'message' => 'User already exists'
-                ],
-                Response::HTTP_CONFLICT
-            );
-        }
+        // TODO: implement serializer
 
-        $user = $userDTO->ToEntity();
-
-        $hashedPassword = $passwordHasher->hashPassword(
-            $user,
-            $user->getPassword()
-        );
-        $user->setPassword($hashedPassword);
-
-        $this->userRepository->add($user, true);
-        $user = null;
-
-        return $this->json(
-            [
-                'message' => 'User created'
-            ],
-            Response::HTTP_CREATED
-        );
+        return $this->statusCreated('User created', $user);
     }
 }
