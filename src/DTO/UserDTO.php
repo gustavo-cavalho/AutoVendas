@@ -3,6 +3,7 @@
 namespace App\DTO;
 
 use App\Entity\User;
+use App\Exceptions\ValidationException;
 use App\Interfaces\DTOConverterInterface;
 use App\Interfaces\DTOValidatorInterface;
 use App\ValueObject\Email;
@@ -43,14 +44,16 @@ class UserDTO implements DTOValidatorInterface, DTOConverterInterface
   /**
    * @see DTOValidatorInterface
    */
-  public function validate(): ?array
+  public function validate(): void
   {
     // TODO: add constants that represents de error mensage
     
     $err[] = $this->email->validate() ? null : 'Invalid email';
     $err[] = $this->password->validate() ? null : 'Invalid password';
-    
-    return empty($err) ? null : array_filter($err);
+
+    if (! empty($err)) {
+      throw new ValidationException('Invalid data', $err);
+    }
   }
 
   public function getEmail(): Email
