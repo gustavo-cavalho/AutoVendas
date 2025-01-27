@@ -7,36 +7,54 @@ use App\Entity\User;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Interfaces\RegistrationsServiceInterface;
 use App\Repository\UserRepository;
-use Doctrine\ORM\Mapping\Id;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+/**
+ * Service responsible for user registration.
+ *
+ * @author Gustavo Carvalho
+ *
+ * @version 1.0
+ */
 class UserRegistrationService implements RegistrationsServiceInterface
 {
-  private UserRepository $userRepository;
-  private UserPasswordHasherInterface $passwordHasher;
+    private UserRepository $userRepository;
+    private UserPasswordHasherInterface $passwordHasher;
 
-  function __construct(UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher)
-  {
-    $this->userRepository = $userRepository;
-    $this->passwordHasher = $passwordHasher;  
-  }
-
-  public function register(UserDTO $userDTO): User
-  {
-    $user = $this->userRepository->findByEmail($userDTO->getEmail());
-    if ($user) {
-        throw new IdentityAlreadyExistsException('User already exists');
+    public function __construct(UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->userRepository = $userRepository;
+        $this->passwordHasher = $passwordHasher;
     }
 
-    $user = $userDTO->ToEntity();
+    /**
+     * Register a new user and hashes the password.
+     *
+     * @param UserDTO $userDTO the user to be registered
+     *
+     * @return User the registered user Entity
+     *
+     * @throws IdentityAlreadyExistsException if the user already exists
+     *
+     * @see App\Interfaces\RegistrationsServiceInterface
+     */
+    public function register(UserDTO $userDTO): User
+    {
+        $user = $this->userRepository->findByEmail($userDTO->getEmail());
+        if ($user) {
+            throw new IdentityAlreadyExistsException('User already exists');
+        }
 
-    $hashedPassword = $this->passwordHasher->hashPassword(
-        $user,
-        $user->getPassword()
-    );
-    $user->setPassword($hashedPassword);
+        $user = $userDTO->ToEntity();
 
-    $this->userRepository->add($user, true);
-    return $user;
-  }
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $user,
+            $user->getPassword()
+        );
+        $user->setPassword($hashedPassword);
+
+        $this->userRepository->add($user, true);
+
+        return $user;
+    }
 }
