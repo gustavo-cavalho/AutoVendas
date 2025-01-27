@@ -8,10 +8,12 @@ namespace App\Interfaces;
 interface ValueObjectInterface
 {
     /**
-     * Prepare the value object to be converted to an entity
-     * in case need do some transformation is possible insert here.
+     * Return the value of the value object.
+     *
+     * @example if the value object is an email
+     * return string that represents the email
      */
-    public function processToEntity();
+    public function getValue();
 
     /**
      * Validate the value object with a custom validation

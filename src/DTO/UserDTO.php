@@ -38,10 +38,10 @@ class UserDTO implements DTOInterface
         $user = new User();
 
         $user->setEmail(
-            $this->getEmail()->processToEntity()
+            $this->getEmail()->getValue()
         );
         $user->setPassword(
-            $this->getPassword()->processToEntity()
+            $this->getPassword()->getValue()
         );
         if ($roles) {
             $user->setRoles($roles);

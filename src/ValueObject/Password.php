@@ -23,7 +23,7 @@ class Password implements ValueObjectInterface
     /**
      * @see ValueObjectInterface
      */
-    public function processToEntity(): string
+    public function getValue(): string
     {
         return $this->password;
     }
