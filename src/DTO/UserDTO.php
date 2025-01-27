@@ -4,15 +4,20 @@ namespace App\DTO;
 
 use App\Entity\User;
 use App\Exceptions\ValidationException;
-use App\Interfaces\DTOConverterInterface;
-use App\Interfaces\DTOValidatorInterface;
+use App\Interfaces\DTOInterface;
 use App\ValueObject\Email;
 use App\ValueObject\Password;
 
-class UserDTO implements DTOValidatorInterface, DTOConverterInterface
+class UserDTO implements DTOInterface
 {
+    /**
+     * @see App\ValueObject\Email
+     */
     private Email $email;
 
+    /**
+     * @see App\ValueObject\Password
+     */
     private Password $password;
 
     public function __construct(Email $email, Password $password)
@@ -22,7 +27,11 @@ class UserDTO implements DTOValidatorInterface, DTOConverterInterface
     }
 
     /**
-     * @see DTOConverterInterface
+     * Convert the data to an entity.
+     *
+     * @param array|null $roles an array of roles
+     *
+     * @see App\Interfaces\DTOInterface
      */
     public function ToEntity(?array $roles = null): User
     {
@@ -42,7 +51,9 @@ class UserDTO implements DTOValidatorInterface, DTOConverterInterface
     }
 
     /**
-     * @see DTOValidatorInterface
+     * Check if the data is valid.
+     *
+     * @see App\Interfaces\DTOInterface
      */
     public function validate(): void
     {
