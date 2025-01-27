@@ -28,6 +28,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $email;
 
     /**
+     * @ORM\Column(type="string", length=180)
+     * @Groups({"show_user"})
+     */
+    private $name;
+
+    /**
+     * @ORM\Column(type="json", length=180)
+     */
+    private $transactionHistory = [];
+
+    /**
      * @ORM\Column(type="json")
      * @Groups({"show_user"})
      */
@@ -126,5 +137,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getTransactionHistory(): ?array
+    {
+        return $this->transactionHistory;
+    }
+
+    public function setTransactionHistory(array $TransactionHistory): self
+    {
+        $this->transactionHistory = $TransactionHistory;
+
+        return $this;
     }
 }

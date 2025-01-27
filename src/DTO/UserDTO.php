@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Exceptions\ValidationException;
 use App\Interfaces\DTOInterface;
 use App\ValueObject\Email;
+use App\ValueObject\Name;
 use App\ValueObject\Password;
 
 class UserDTO implements DTOInterface
@@ -20,10 +21,16 @@ class UserDTO implements DTOInterface
      */
     private Password $password;
 
-    public function __construct(Email $email, Password $password)
+    /**
+     * @see App\ValueObject\Name
+     */
+    private Name $name;
+
+    public function __construct(Email $email, Password $password, Name $name)
     {
         $this->email = $email;
         $this->password = $password;
+        $this->name = $name;
     }
 
     /**
@@ -43,6 +50,10 @@ class UserDTO implements DTOInterface
         $user->setPassword(
             $this->getPassword()->getValue()
         );
+        $user->setName(
+            $this->getName()->getValue()
+        );
+        
         if ($roles) {
             $user->setRoles($roles);
         }
@@ -58,12 +69,17 @@ class UserDTO implements DTOInterface
     public function validate(): void
     {
         $err = [];
+
         if (!$this->getEmail()->validate()) {
             $err['email'] = 'Invalid email';
         }
 
         if (!$this->getPassword()->validate()) {
             $err['password'] = 'Invalid password';
+        }
+
+        if (!$this->getName()->validate()) {
+            $err['name'] = 'Empty Name';
         }
 
         if (!empty($err)) {
@@ -79,5 +95,10 @@ class UserDTO implements DTOInterface
     public function getPassword(): Password
     {
         return $this->password;
+    }
+
+    public function getName(): Name
+    {
+        return $this->name;
     }
 }
