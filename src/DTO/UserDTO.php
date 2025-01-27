@@ -11,58 +11,62 @@ use App\ValueObject\Password;
 
 class UserDTO implements DTOValidatorInterface, DTOConverterInterface
 {
-  private Email $email;
+    private Email $email;
 
-  private Password $password;
+    private Password $password;
 
-  function __construct(Email $email, Password $password)
-  {
-    $this->email = $email;
-    $this->password = $password;
-  }
-
-  /**
-   * @see DTOConverterInterface 
-   */
-  public function ToEntity(?array $roles = null): User
-  {
-    $user = new User();
-
-    $user->setEmail(
-      $this->getEmail()->processToEntity()
-    );
-    $user->setPassword(
-      $this->getPassword()->processToEntity()
-    );
-    if ($roles) {
-      $user->setRoles($roles);
+    public function __construct(Email $email, Password $password)
+    {
+        $this->email = $email;
+        $this->password = $password;
     }
-    
-    return $user;
-  }
 
-  /**
-   * @see DTOValidatorInterface
-   */
-  public function validate(): void
-  {
-    // TODO: add constants that represents de error mensage
-    
-    $err[] = $this->email->validate() ? null : 'Invalid email';
-    $err[] = $this->password->validate() ? null : 'Invalid password';
+    /**
+     * @see DTOConverterInterface
+     */
+    public function ToEntity(?array $roles = null): User
+    {
+        $user = new User();
 
-    if (! empty($err)) {
-      throw new ValidationException('Invalid data', $err);
+        $user->setEmail(
+            $this->getEmail()->processToEntity()
+        );
+        $user->setPassword(
+            $this->getPassword()->processToEntity()
+        );
+        if ($roles) {
+            $user->setRoles($roles);
+        }
+
+        return $user;
     }
-  }
 
-  public function getEmail(): Email
-  {
-    return $this->email;
-  }
+    /**
+     * @see DTOValidatorInterface
+     */
+    public function validate(): void
+    {
+        $err = [];
+        if (!$this->getEmail()->validate()) {
+            $err['email'] = 'Invalid email';
+        }
 
-  public function getPassword(): Password
-  {
-    return $this->password;
-  }
+        if (!$this->getPassword()->validate()) {
+            $err['password'] = 'Invalid password';
+        }
+
+        if (!empty($err)) {
+            throw new ValidationException('Invalid data', array_filter($err));
+        }
+    }
+
+    public function getEmail(): Email
+    {
+        return $this->email;
+    }
+
+    public function getPassword(): Password
+    {
+        return $this->password;
+    }
 }
