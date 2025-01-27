@@ -2,38 +2,63 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\DTO\UserDTO;
+use App\Exceptions\InvalidCredentialsException;
+use App\Interfaces\LoginServiceInterface;
+use App\Repository\UserRepository;
+use App\Service\JWTService;
+use App\Traits\JsonRequestUtil;
+use App\Traits\JsonResponseUtil;
+use App\ValueObject\Email;
+use App\ValueObject\Password;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class LoginController extends AbstractController
 {
+    use JsonResponseUtil;
+    use JsonRequestUtil;
+
+    private LoginServiceInterface $loginService;
+
+    public function __construct(
+        JWTTokenManagerInterface $jwtManager,
+        UserRepository $userRepository,
+        UserPasswordHasherInterface $passwordHasher
+    ) {
+        $this->loginService = new JWTService($jwtManager, $userRepository, $passwordHasher);
+    }
+
     /**
-     * @Route("/login", name="user_login", methods={"POST"})
+     * @Route("/login", name="login_check", methods={"POST"})
      */
-    public function login(/*@[CurrentUser*/ ?User $user): JsonResponse
+    public function login(Request $request): JsonResponse
     {
-        if (!$user) {
-            return $this->json(
-                [
-                    'message' => 'Unauthorized',
-                ],
-                Response::HTTP_UNAUTHORIZED
+        try {
+            $data = $this->getJsonBodyFields($request, ['email', 'password']);
+
+            $userDTO = new UserDTO(
+                new Email($data['email']),
+                new Password($data['password']),
             );
+
+            $token = $this->loginService->autenticate($userDTO);
+        } catch (BadRequestHttpException $e) {
+            return $this->errBadRequest($e->getMessage());
+        } catch (InvalidCredentialsException $e) {
+            return $this->errBadRequest($e->getMessage());
         }
 
-        $token = 'todo';
+        $json = [
+            'user' => $userDTO->getEmail()->getValue(),
+            'token' => $token,
+        ];
 
-        return $this->json(
-            [
-                'message' => 'Authorized',
-                'user' => $user->getUserIdentifier(),
-                'token' => $token,
-            ],
-            Response::HTTP_OK
-        );
+        return $this->statusOk('You are logged in', $json);
     }
 }
