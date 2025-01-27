@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Auth;
 
 use App\DTO\UserDTO;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Exceptions\ValidationException;
-use App\Interfaces\RegistrationsServiceInterface;
+use App\Interfaces\Auth\RegistrationsServiceInterface;
 use App\Interfaces\SerializerInterface;
 use App\Repository\UserRepository;
-use App\Service\UserRegistrationService;
+use App\Service\Auth\UserRegistrationService;
 use App\Service\UserSerializerService;
-use App\Traits\JsonRequestUtil;
-use App\Traits\JsonResponseUtil;
+use App\Traits\Util\JsonRequestUtils;
+use App\Traits\Util\JsonResponseUtils;
 use App\ValueObject\Email;
 use App\ValueObject\Name;
 use App\ValueObject\Password;
@@ -25,8 +25,8 @@ use Symfony\Component\Serializer\SerializerInterface as SymfonySerializerInterfa
 
 class RegistrationController extends AbstractController
 {
-    use JsonResponseUtil;
-    use JsonRequestUtil;
+    use JsonResponseUtils;
+    use JsonRequestUtils;
 
     private RegistrationsServiceInterface $registrationsService;
     private SerializerInterface $serializer;

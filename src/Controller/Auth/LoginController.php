@@ -4,11 +4,11 @@ namespace App\Controller;
 
 use App\DTO\UserDTO;
 use App\Exceptions\InvalidCredentialsException;
-use App\Interfaces\LoginServiceInterface;
+use App\Interfaces\Auth\LoginServiceInterface;
 use App\Repository\UserRepository;
-use App\Service\JWTService;
-use App\Traits\JsonRequestUtil;
-use App\Traits\JsonResponseUtil;
+use App\Service\Auth\JWTService;
+use App\Traits\Util\JsonRequestUtils;
+use App\Traits\Util\JsonResponseUtils;
 use App\ValueObject\Email;
 use App\ValueObject\Name;
 use App\ValueObject\Password;
@@ -22,8 +22,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LoginController extends AbstractController
 {
-    use JsonResponseUtil;
-    use JsonRequestUtil;
+    use JsonResponseUtils;
+    use JsonRequestUtils;
 
     private LoginServiceInterface $loginService;
 
