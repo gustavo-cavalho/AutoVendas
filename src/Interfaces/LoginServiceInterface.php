@@ -14,9 +14,9 @@ interface LoginServiceInterface
      *
      * @param UserDTO $payload the nescessary data to authenticate
      *
-     * @return mixed whatever the authentication method returns
+     * @return string the token
      *
      * @throws InvalidCredentialsException if password or email is invalid
      */
-    public function autenticate(UserDTO $payload): mixed;
+    public function autenticate(UserDTO $payload): string;
 }

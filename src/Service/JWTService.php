@@ -25,7 +25,7 @@ class JWTService implements LoginServiceInterface
         $this->passwordHasher = $passwordHasher;
     }
 
-    public function autenticate(UserDTO $payload): mixed
+    public function autenticate(UserDTO $payload): string
     {
         $user = $this->userRepository->findByEmail($payload->getEmail());
 
@@ -33,7 +33,7 @@ class JWTService implements LoginServiceInterface
             throw new InvalidCredentialsException('User not found with email: '.$payload->getEmail());
         }
 
-        if (!$this->passwordHasher->isPasswordValid($user, $payload->getPassword())) {
+        if (!$this->passwordHasher->isPasswordValid($user, $payload->getPassword()->getValue())) {
             throw new InvalidCredentialsException('Invalid password');
         }
 
