@@ -1,20 +1,17 @@
 security:
   enable_authenticator_manager: true
 
-  # Configuração do hash da senha
   password_hashers:
     Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: "auto"
 
-  # Definição do provedor de usuários
   providers:
     app_user_provider:
       entity:
         class: App\Entity\User
         property: email
 
-  # Definição dos firewalls
   firewalls:
-    # Firewall para login (autenticação com JSON)
+    # Firewall for login (auth with JSON)
     login:
       pattern: ^/api/login
       stateless: true
@@ -23,23 +20,20 @@ security:
         success_handler: lexik_jwt_authentication.handler.authentication_success
         failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-    # Firewall para a API (autenticação com JWT)
+    # Firewall for the API (auth with JWT)
     api:
       pattern: ^/api
       stateless: true
-      jwt: ~ # Ativa a autenticação via JWT
+      jwt: ~
 
-    # Main firewall (caso você tenha outras páginas não relacionadas à API)
     main:
       lazy: true
       provider: app_user_provider
 
-    # Firewall para a configuração de desenvolvimento (desabilita segurança para algumas rotas)
     dev:
       pattern: ^/(_(profiler|wdt)|css|images|js)/
       security: false
 
-  # Controle de acesso para rotas
   access_control:
     - { path: ^/api/health, roles: PUBLIC_ACCESS }
     - { path: ^/api/register, roles: PUBLIC_ACCESS }
