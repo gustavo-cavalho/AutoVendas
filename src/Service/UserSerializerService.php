@@ -7,15 +7,22 @@ use Symfony\Component\Serializer\Serializer as SymfonySerializer;
 
 class UserSerializerService implements SerializerInterface
 {
-  private SymfonySerializer $serializer;
+    private SymfonySerializer $serializer;
 
-  public function __construct(SymfonySerializer $serializer)
-  {
-    $this->serializer = $serializer;
-  }
+    public function __construct(SymfonySerializer $serializer)
+    {
+        $this->serializer = $serializer;
+    }
 
-  public function serialize(object $object): string
-  {
-    return 'TODO: make it show only the fields that are needed';
-  }
+    public function serialize(object $object, array $groups = []): array
+    {
+        $context = [];
+        if (!empty($groups)) {
+            $context['groups'] = $groups;
+        }
+
+        $serializedDara = $this->serializer->serialize($object, 'json', $context);
+
+        return json_decode($serializedDara, true);
+    }
 }

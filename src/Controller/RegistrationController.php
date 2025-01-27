@@ -10,10 +10,12 @@ use App\Interfaces\SerializerInterface;
 use App\Repository\UserRepository;
 use App\Service\UserRegistrationService;
 use App\Service\UserSerializerService;
+use App\Traits\JsonRequestUtil;
 use App\Traits\JsonResponseUtil;
 use App\ValueObject\Email;
 use App\ValueObject\Password;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -23,15 +25,16 @@ use Symfony\Component\Serializer\SerializerInterface as SymfonySerializerInterfa
 class RegistrationController extends AbstractController
 {
     use JsonResponseUtil;
+    use JsonRequestUtil;
 
     private RegistrationsServiceInterface $registrationsService;
     private SerializerInterface $serializer;
 
-    function __construct(
+    public function __construct(
         UserRepository $userRepository,
         UserPasswordHasherInterface $passwordHasher,
         SymfonySerializerInterface $serializer
-        ) {
+    ) {
         $this->registrationsService = new UserRegistrationService($userRepository, $passwordHasher);
         $this->serializer = new UserSerializerService($serializer);
     }
@@ -41,16 +44,17 @@ class RegistrationController extends AbstractController
      */
     public function register(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        if (!$data) {
-            return $this->errBadRequest('Invalid data');
+        try {
+            $data = $this->getJsonBodyFields($request, ['email', 'password']);
+        } catch (BadRequestException $e) {
+            return $this->errBadRequest($e->getMessage());
         }
 
         $userDTO = new UserDTO(
             new Email($data['email']),
             new Password($data['password']),
         );
-        
+
         try {
             $userDTO->validate();
             $user = $this->registrationsService->register($userDTO);
@@ -60,7 +64,7 @@ class RegistrationController extends AbstractController
             return $this->errBadRequest($e->getMessage());
         }
 
-        // TODO: implement serializer
+        $user = $this->serializer->serialize($user, ['show_user']);
 
         return $this->statusCreated('User created', $user);
     }
