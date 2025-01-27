@@ -5,12 +5,26 @@ namespace App\Traits;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+/**
+ * Trait that is responsible for handling JSON requests.
+ *
+ * Provides methods to validate and extract JSON data from a request.
+ *
+ * @author Gustavo Carvalho
+ *
+ * @version 1.0
+ */
 trait JsonRequestUtil
 {
     /**
-     * Obtém os campos obrigatórios da requisição JSON.
+     * Check and extract JSON data from a request.
      *
-     * @throws BadRequestHttpException
+     * @param Request $request        the request object
+     * @param array   $requiredFields an array of required field names
+     *
+     * @return array an array of extracted JSON data
+     *
+     * @throws BadRequestHttpException if the JSON data is invalid or missing required fields
      */
     protected function getJsonBodyFields(Request $request, array $requiredFields): array
     {
