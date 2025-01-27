@@ -10,6 +10,7 @@ use App\Service\JWTService;
 use App\Traits\JsonRequestUtil;
 use App\Traits\JsonResponseUtil;
 use App\ValueObject\Email;
+use App\ValueObject\Name;
 use App\ValueObject\Password;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,11 +41,12 @@ class LoginController extends AbstractController
     public function login(Request $request): JsonResponse
     {
         try {
-            $data = $this->getJsonBodyFields($request, ['email', 'password']);
+            $data = $this->getJsonBodyFields($request, ['email', 'password', 'name']);
 
             $userDTO = new UserDTO(
                 new Email($data['email']),
                 new Password($data['password']),
+                new Name($data['name'])
             );
 
             $token = $this->loginService->autenticate($userDTO);
