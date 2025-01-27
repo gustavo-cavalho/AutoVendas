@@ -2,16 +2,20 @@
 
 namespace App\Interfaces;
 
+/**
+ * Interface to define a value object.
+ */
 interface ValueObjectInterface
 {
-  /**
-   * Convert the objects in a format that the entity reconize and if needed
-   * do some action.
-   * @example -- hashes a password before return it.
-   */
-  function processToEntity();
-  /**
-   * Insert the logic to validate a object here.
-   */
-  function validate(): bool;
+    /**
+     * Prepare the value object to be converted to an entity
+     * in case need do some transformation is possible insert here.
+     */
+    public function processToEntity();
+
+    /**
+     * Validate the value object with a custom validation
+     * based on the business rules.
+     */
+    public function validate(): bool;
 }
