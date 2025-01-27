@@ -13,11 +13,12 @@ use App\Service\UserSerializerService;
 use App\Traits\JsonRequestUtil;
 use App\Traits\JsonResponseUtil;
 use App\ValueObject\Email;
+use App\ValueObject\Name;
 use App\ValueObject\Password;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface as SymfonySerializerInterface;
@@ -45,14 +46,15 @@ class RegistrationController extends AbstractController
     public function register(Request $request): JsonResponse
     {
         try {
-            $data = $this->getJsonBodyFields($request, ['email', 'password']);
-        } catch (BadRequestException $e) {
+            $data = $this->getJsonBodyFields($request, ['email', 'password', 'name']);
+        } catch (BadRequestHttpException $e) {
             return $this->errBadRequest($e->getMessage());
         }
 
         $userDTO = new UserDTO(
             new Email($data['email']),
             new Password($data['password']),
+            new Name($data['name'])
         );
 
         try {
