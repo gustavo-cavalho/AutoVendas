@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Auth;
 
 use App\DTO\UserDTO;
 use App\Entity\User;
 use App\Exceptions\IdentityAlreadyExistsException;
-use App\Interfaces\RegistrationsServiceInterface;
+use App\Interfaces\Auth\RegistrationsServiceInterface;
 use App\Repository\UserRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 

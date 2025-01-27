@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace App\Traits\Util;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @version 1.0
  */
-trait JsonResponseUtil
+trait JsonResponseUtils
 {
     /**
      * Format a success response.

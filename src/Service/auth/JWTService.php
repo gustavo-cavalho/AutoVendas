@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Auth;
 
 use App\DTO\UserDTO;
 use App\Exceptions\InvalidCredentialsException;
-use App\Interfaces\LoginServiceInterface;
+use App\Interfaces\Auth\LoginServiceInterface;
 use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
