@@ -12,9 +12,6 @@ use App\Service\Auth\UserRegistrationService;
 use App\Service\UserSerializerService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
-use App\ValueObject\Email;
-use App\ValueObject\Name;
-use App\ValueObject\Password;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,11 +48,7 @@ class RegistrationController extends AbstractController
             return $this->errBadRequest($e->getMessage());
         }
 
-        $userDTO = new UserDTO(
-            new Email($data['email']),
-            new Password($data['password']),
-            new Name($data['name'])
-        );
+        $userDTO = new UserDTO($data);
 
         try {
             $userDTO->validate();
