@@ -38,7 +38,7 @@ class UserDTO implements DTOInterface
      *
      * @param array|null $options is possible to pass extra info if needed
      *
-     * @example ['roles' => ['ROLE_USER', 'ROLE_ADMIN']]
+     * @example - ['roles' => ['ROLE_USER', 'ROLE_ADMIN']]
      *
      * @see App\Interfaces\DTOInterface
      */

@@ -24,7 +24,7 @@ class VehicleDTO implements DTOInterface
      *
      * @param array|null $options is possible add extra info if needed
      *
-     * @example Doesn't implented yet
+     * @example - Doesn't implented yet
      *
      * @see App\Interfaces\DTOInterface
      */
