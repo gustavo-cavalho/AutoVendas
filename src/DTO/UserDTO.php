@@ -5,9 +5,9 @@ namespace App\DTO;
 use App\Entity\User;
 use App\Exceptions\ValidationException;
 use App\Interfaces\DTOInterface;
-use App\ValueObject\Email;
-use App\ValueObject\Name;
-use App\ValueObject\Password;
+use App\ValueObject\User\Email;
+use App\ValueObject\User\Name;
+use App\ValueObject\User\Password;
 
 class UserDTO implements DTOInterface
 {
@@ -26,11 +26,11 @@ class UserDTO implements DTOInterface
      */
     private Name $name;
 
-    public function __construct(Email $email, Password $password, Name $name)
+    public function __construct(array $validatedData)
     {
-        $this->email = $email;
-        $this->password = $password;
-        $this->name = $name;
+        $this->email = new Email($validatedData['email']);
+        $this->password = new Password($validatedData['password']);
+        $this->name = new Name($validatedData['name']);
     }
 
     /**
