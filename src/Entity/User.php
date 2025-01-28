@@ -50,6 +50,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $password;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=CarStore::class, inversedBy="employers")
+     */
+    private $carStore;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -159,6 +164,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTransactionHistory(array $TransactionHistory): self
     {
         $this->transactionHistory = $TransactionHistory;
+
+        return $this;
+    }
+
+    public function getCarStore(): ?CarStore
+    {
+        return $this->carStore;
+    }
+
+    public function setCarStore(?CarStore $carStore): self
+    {
+        $this->carStore = $carStore;
 
         return $this;
     }
