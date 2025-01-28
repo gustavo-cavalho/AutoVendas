@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  *
  * @version 1.0
  */
-trait JsonRequestUtils
+trait JsonRequestUtil
 {
     /**
      * Check and extract JSON data from a request.

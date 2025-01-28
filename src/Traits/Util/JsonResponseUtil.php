@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @version 1.0
  */
-trait JsonResponseUtils
+trait JsonResponseUtil
 {
     /**
      * Format a success response.

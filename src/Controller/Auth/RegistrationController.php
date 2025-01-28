@@ -10,8 +10,8 @@ use App\Interfaces\SerializerInterface;
 use App\Repository\UserRepository;
 use App\Service\Auth\UserRegistrationService;
 use App\Service\UserSerializerService;
-use App\Traits\Util\JsonRequestUtils;
-use App\Traits\Util\JsonResponseUtils;
+use App\Traits\Util\JsonRequestUtil;
+use App\Traits\Util\JsonResponseUtil;
 use App\ValueObject\Email;
 use App\ValueObject\Name;
 use App\ValueObject\Password;
@@ -25,8 +25,8 @@ use Symfony\Component\Serializer\SerializerInterface as SymfonySerializerInterfa
 
 class RegistrationController extends AbstractController
 {
-    use JsonResponseUtils;
-    use JsonRequestUtils;
+    use JsonResponseUtil;
+    use JsonRequestUtil;
 
     private RegistrationsServiceInterface $registrationsService;
     private SerializerInterface $serializer;
