@@ -12,11 +12,12 @@ interface DTOInterface
     /**
      * Convert the object to an entity.
      *
-     * @param array|null $roles an array of roles if need
+     * @param array|null $options an array of keys and values
+     *                            that can be used to configure the entity
      *
      * @return object an entity that DTO represents
      */
-    public function ToEntity(?array $roles = null): object;
+    public function ToEntity(?array $options = null): object;
 
     /**
      * Validade all fields in the DTO.

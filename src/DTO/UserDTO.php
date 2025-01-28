@@ -34,27 +34,33 @@ class UserDTO implements DTOInterface
     }
 
     /**
-     * Convert the data to an entity.
+     * Convert the DTO to an entity.
      *
-     * @param array|null $roles an array of roles
+     * @param array|null $options is possible to pass extra info if needed
+     *
+     * @example ['roles' => ['ROLE_USER', 'ROLE_ADMIN']]
      *
      * @see App\Interfaces\DTOInterface
      */
-    public function ToEntity(?array $roles = null): User
+    public function ToEntity(?array $options = null): User
     {
         $user = new User();
 
         $user->setEmail(
             $this->getEmail()->getValue()
-        );
-        $user->setPassword(
+        )->setPassword(
             $this->getPassword()->getValue()
-        );
-        $user->setName(
+        )->setName(
             $this->getName()->getValue()
         );
-        
-        if ($roles) {
+
+        if (isset($options['roles'])) {
+            $roles = $options['roles'];
+
+            if (!is_array($roles)) {
+                throw new \InvalidArgumentException('Roles must be an array');
+            }
+
             $user->setRoles($roles);
         }
 
@@ -79,7 +85,7 @@ class UserDTO implements DTOInterface
         }
 
         if (!$this->getName()->validate()) {
-            $err['name'] = 'Empty Name';
+            $err['name'] = 'Invalid Name';
         }
 
         if (!empty($err)) {
