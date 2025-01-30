@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\CarStoreRepository;
+use App\Repository\VehicleStoreRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=CarStoreRepository::class)
+ * @ORM\Entity(repositoryClass=VehicleStoreRepository::class)
  */
-class CarStore
+class VehicleStore
 {
     /**
      * @ORM\Id
@@ -27,19 +27,39 @@ class CarStore
     private $credencial;
 
     /**
-     * @ORM\OneToMany(targetEntity=user::class, mappedBy="carStore")
-     */
-    private $employers;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Vehicle::class, mappedBy="carStore")
+     * @ORM\OneToMany(targetEntity=Vehicle::class, mappedBy="VehicleStore")
      */
     private $vehicleStock;
+
+    /**
+     * @ORM\OneToMany(targetEntity=user::class, mappedBy="VehicleStore")
+     */
+    private $employers;
 
     /**
      * @ORM\OneToMany(targetEntity=Ad::class, mappedBy="advertiserStore", orphanRemoval=true)
      */
     private $ads;
+
+    /**
+     * @ORM\Column(type="string", length=13)
+     */
+    private $phone;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $email;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Address::class, mappedBy="storeId", cascade={"persist", "remove"})
+     */
+    private $address;
 
     public function __construct()
     {
@@ -77,7 +97,7 @@ class CarStore
     {
         if (!$this->employers->contains($employer)) {
             $this->employers[] = $employer;
-            $employer->setCarStore($this);
+            $employer->setVehicleStore($this);
         }
 
         return $this;
@@ -87,8 +107,8 @@ class CarStore
     {
         if ($this->employers->removeElement($employer)) {
             // set the owning side to null (unless already changed)
-            if ($employer->getCarStore() === $this) {
-                $employer->setCarStore(null);
+            if ($employer->getVehicleStore() === $this) {
+                $employer->setVehicleStore(null);
             }
         }
 
@@ -107,7 +127,7 @@ class CarStore
     {
         if (!$this->vehicleStock->contains($vehicleStock)) {
             $this->vehicleStock[] = $vehicleStock;
-            $vehicleStock->setCarStore($this);
+            $vehicleStock->setVehicleStore($this);
         }
 
         return $this;
@@ -117,8 +137,8 @@ class CarStore
     {
         if ($this->vehicleStock->removeElement($vehicleStock)) {
             // set the owning side to null (unless already changed)
-            if ($vehicleStock->getCarStore() === $this) {
-                $vehicleStock->setCarStore(null);
+            if ($vehicleStock->getVehicleStore() === $this) {
+                $vehicleStock->setVehicleStore(null);
             }
         }
 
@@ -151,6 +171,59 @@ class CarStore
                 $ad->setAdvertiserStore(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(Address $address): self
+    {
+        // set the owning side of the relation if necessary
+        if ($address->getVehicleStore() !== $this) {
+            $address->setVehicleStore($this);
+        }
+
+        $this->address = $address;
 
         return $this;
     }

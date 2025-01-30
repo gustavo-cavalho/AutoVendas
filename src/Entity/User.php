@@ -15,45 +15,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
-     * @ORM\Column(type="integer") 
+     *
+     * @ORM\Column(type="integer")
+     *
      * @Groups({"show_user"})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"show_user"})
-     */
-    private $email;
-
-    /**
      * @ORM\Column(type="string", length=180)
+     *
      * @Groups({"show_user"})
      */
     private $name;
 
     /**
-     * @ORM\Column(type="json", length=180)
-     */
-    private $transactionHistory = [];
-
-    /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="string", length=180, unique=true)
+     *
      * @Groups({"show_user"})
      */
-    private $roles = [];
+    private $email;
 
     /**
      * @var string The hashed password
+     *
      * @ORM\Column(type="string")
      */
     private $password;
 
     /**
-     * @ORM\ManyToOne(targetEntity=CarStore::class, inversedBy="employers")
+     * @ORM\Column(type="json")
      */
-    private $carStore;
+    private $roles = [];
+
+    /**
+     * @ORM\ManyToOne(targetEntity=VehicleStore::class, inversedBy="employers")
+     */
+    private $vehicleStore;
 
     public function getId(): ?int
     {
@@ -156,26 +156,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getTransactionHistory(): ?array
+    public function getVehicleStore(): ?VehicleStore
     {
-        return $this->transactionHistory;
+        return $this->vehicleStore;
     }
 
-    public function setTransactionHistory(array $TransactionHistory): self
+    public function setVehicleStore(?VehicleStore $vehicleStore): self
     {
-        $this->transactionHistory = $TransactionHistory;
-
-        return $this;
-    }
-
-    public function getCarStore(): ?CarStore
-    {
-        return $this->carStore;
-    }
-
-    public function setCarStore(?CarStore $carStore): self
-    {
-        $this->carStore = $carStore;
+        $this->vehicleStore = $vehicleStore;
 
         return $this;
     }

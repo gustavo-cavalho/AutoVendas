@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\CarStore;
+use App\Entity\VehicleStore;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CarStore>
+ * @extends ServiceEntityRepository<VehicleStore>
  *
- * @method CarStore|null find($id, $lockMode = null, $lockVersion = null)
- * @method CarStore|null findOneBy(array $criteria, array $orderBy = null)
- * @method CarStore[]    findAll()
- * @method CarStore[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method VehicleStore|null find($id, $lockMode = null, $lockVersion = null)
+ * @method VehicleStore|null findOneBy(array $criteria, array $orderBy = null)
+ * @method VehicleStore[]    findAll()
+ * @method VehicleStore[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CarStoreRepository extends ServiceEntityRepository
+class VehicleStoreRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CarStore::class);
+        parent::__construct($registry, VehicleStore::class);
     }
 
-    public function add(CarStore $entity, bool $flush = false): void
+    public function add(VehicleStore $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class CarStoreRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(CarStore $entity, bool $flush = false): void
+    public function remove(VehicleStore $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class CarStoreRepository extends ServiceEntityRepository
     }
 
     //    /**
-    //     * @return CarStore[] Returns an array of CarStore objects
+    //     * @return VehicleStore[] Returns an array of VehicleStore objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -54,7 +54,7 @@ class CarStoreRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?CarStore
+    //    public function findOneBySomeField($value): ?VehicleStore
     //    {
     //        return $this->createQueryBuilder('c')
     //            ->andWhere('c.exampleField = :val')

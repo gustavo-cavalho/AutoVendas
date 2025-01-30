@@ -27,7 +27,7 @@ class Ad
     private $vehicleAdvertised;
 
     /**
-     * @ORM\ManyToOne(targetEntity=CarStore::class, inversedBy="ads")
+     * @ORM\ManyToOne(targetEntity=VehicleStore::class, inversedBy="ads")
      *
      * @ORM\JoinColumn(nullable=false)
      */
@@ -135,12 +135,12 @@ class Ad
         return $this;
     }
 
-    public function getAdvertiserStore(): ?CarStore
+    public function getAdvertiserStore(): ?VehicleStore
     {
         return $this->advertiserStore;
     }
 
-    public function setAdvertiserStore(?CarStore $advertiserStore): self
+    public function setAdvertiserStore(?VehicleStore $advertiserStore): self
     {
         $this->advertiserStore = $advertiserStore;
 

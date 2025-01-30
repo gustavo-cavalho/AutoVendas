@@ -20,6 +20,11 @@ class Vehicle
     private $id;
 
     /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private $type;
+
+    /**
      * @ORM\Column(type="string", length=20)
      */
     private $brand;
@@ -30,36 +35,46 @@ class Vehicle
     private $model;
 
     /**
-     * @ORM\Column(type="date_immutable")
+     * @ORM\Column(type="integer")
      */
     private $manufacturedYear;
 
     /**
-     * @ORM\Column(type="string", length=10)
+     * @ORM\Column(type="integer")
      */
     private $mileage;
 
     /**
-     * @ORM\Column(type="string", length=20)
-     */
-    private $fuelType;
-
-    /**
-     * @ORM\Column(type="string", length=20)
+     * @ORM\Column(type="string", length=7)
      */
     private $licensePlate;
 
     /**
-     * @ORM\ManyToOne(targetEntity=CarStore::class, inversedBy="vehicleStock")
+     * @ORM\ManyToOne(targetEntity=VehicleStore::class, inversedBy="vehicleStock")
      *
      * @ORM\JoinColumn(nullable=false)
      */
-    private $carStore;
+    private $vehicleStore;
 
     /**
      * @ORM\OneToOne(targetEntity=Ad::class, mappedBy="vehicleAdvertised", cascade={"persist", "remove"})
      */
     private $ad;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $brandIntegration;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $modelIntegration;
+
+    /**
+     * @ORM\Column(type="string", length=7)
+     */
+    private $yearIntegration;
 
     public function getId(): ?int
     {
@@ -90,12 +105,12 @@ class Vehicle
         return $this;
     }
 
-    public function getManufacturedYear(): ?\DateTimeImmutable
+    public function getManufacturedYear(): ?string
     {
         return $this->manufacturedYear;
     }
 
-    public function setManufacturedYear(\DateTimeImmutable $manufacturedYear): self
+    public function setManufacturedYear(string $manufacturedYear): self
     {
         $this->manufacturedYear = $manufacturedYear;
 
@@ -114,18 +129,6 @@ class Vehicle
         return $this;
     }
 
-    public function getFuelType(): ?string
-    {
-        return $this->fuelType;
-    }
-
-    public function setFuelType(string $fuelType): self
-    {
-        $this->fuelType = $fuelType;
-
-        return $this;
-    }
-
     public function getLicensePlate(): ?string
     {
         return $this->licensePlate;
@@ -138,14 +141,14 @@ class Vehicle
         return $this;
     }
 
-    public function getCarStore(): ?CarStore
+    public function getVehicleStore(): ?VehicleStore
     {
-        return $this->carStore;
+        return $this->vehicleStore;
     }
 
-    public function setCarStore(?CarStore $carStore): self
+    public function setVehicleStore(?VehicleStore $vehicleStore): self
     {
-        $this->carStore = $carStore;
+        $this->vehicleStore = $vehicleStore;
 
         return $this;
     }
@@ -163,6 +166,54 @@ class Vehicle
         }
 
         $this->ad = $ad;
+
+        return $this;
+    }
+
+    public function getBrandIntegration(): ?string
+    {
+        return $this->brandIntegration;
+    }
+
+    public function setBrandIntegration(string $brandIntegration): self
+    {
+        $this->brandIntegration = $brandIntegration;
+
+        return $this;
+    }
+
+    public function getModelIntegration(): ?int
+    {
+        return $this->modelIntegration;
+    }
+
+    public function setModelIntegration(int $modelIntegration): self
+    {
+        $this->modelIntegration = $modelIntegration;
+
+        return $this;
+    }
+
+    public function getYearIntegration(): ?string
+    {
+        return $this->yearIntegration;
+    }
+
+    public function setYearIntegration(string $yearIntegration): self
+    {
+        $this->yearIntegration = $yearIntegration;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
