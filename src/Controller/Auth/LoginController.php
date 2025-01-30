@@ -9,7 +9,9 @@ use App\Repository\UserRepository;
 use App\Service\Auth\JWTService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
-use App\ValueObject\Name;
+use App\ValueObject\User\Email;
+use App\ValueObject\User\Name;
+use App\ValueObject\User\Password;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,9 +41,13 @@ class LoginController extends AbstractController
     public function login(Request $request): JsonResponse
     {
         try {
-            $data = $this->getJsonBodyFields($request, ['email', 'password', 'name']);
+            $data = $this->getJsonBodyFields($request, ['email', 'password']);
 
-            $userDTO = new UserDTO($data);
+            $userDTO = new UserDTO(
+                new Password($data['password']),
+                new Email($data['email']),
+                new Name($data['name'])
+            );
 
             $token = $this->loginService->autenticate($userDTO);
         } catch (BadRequestHttpException $e) {
@@ -51,7 +57,7 @@ class LoginController extends AbstractController
         }
 
         $json = [
-            'user' => $userDTO->getEmail()->getValue(),
+            'user' => $userDTO->getIdentifier(),
             'token' => $token,
         ];
 

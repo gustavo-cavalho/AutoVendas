@@ -4,12 +4,12 @@ namespace App\DTO;
 
 use App\Entity\User;
 use App\Exceptions\ValidationException;
-use App\Interfaces\DTOInterface;
+use App\Interfaces\Auth\UserDTOInterface;
 use App\ValueObject\User\Email;
 use App\ValueObject\User\Name;
 use App\ValueObject\User\Password;
 
-class UserDTO implements DTOInterface
+class UserDTO implements UserDTOInterface
 {
     /**
      * @see App\ValueObject\Email
@@ -26,11 +26,11 @@ class UserDTO implements DTOInterface
      */
     private Name $name;
 
-    public function __construct(array $validatedData)
+    public function __construct($email, $password, $name)
     {
-        $this->email = new Email($validatedData['email']);
-        $this->password = new Password($validatedData['password']);
-        $this->name = new Name($validatedData['name']);
+        $this->email = $email;
+        $this->password = $password;
+        $this->name = $name;
     }
 
     /**
@@ -46,13 +46,10 @@ class UserDTO implements DTOInterface
     {
         $user = new User();
 
-        $user->setEmail(
-            $this->getEmail()->getValue()
-        )->setPassword(
-            $this->getPassword()->getValue()
-        )->setName(
-            $this->getName()->getValue()
-        );
+        $user
+            ->setEmail($this->email->getValue())
+            ->setPassword($this->password->getValue())
+            ->setName($this->name->getValue());
 
         if (isset($options['roles'])) {
             $roles = $options['roles'];
@@ -76,15 +73,15 @@ class UserDTO implements DTOInterface
     {
         $err = [];
 
-        if (!$this->getEmail()->validate()) {
+        if (!$this->email->validate()) {
             $err['email'] = 'Invalid email';
         }
 
-        if (!$this->getPassword()->validate()) {
+        if (!$this->password->validate()) {
             $err['password'] = 'Invalid password';
         }
 
-        if (!$this->getName()->validate()) {
+        if (!$this->name->validate()) {
             $err['name'] = 'Invalid Name';
         }
 
@@ -93,18 +90,13 @@ class UserDTO implements DTOInterface
         }
     }
 
-    public function getEmail(): Email
+    public function getIdentifier(): string
     {
-        return $this->email;
+        return $this->email->getValue();
     }
 
-    public function getPassword(): Password
+    public function getPassword(): string
     {
-        return $this->password;
-    }
-
-    public function getName(): Name
-    {
-        return $this->name;
+        return $this->password->getValue();
     }
 }

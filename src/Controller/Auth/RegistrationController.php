@@ -12,6 +12,9 @@ use App\Service\Auth\UserRegistrationService;
 use App\Service\UserSerializerService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
+use App\ValueObject\User\Email;
+use App\ValueObject\User\Name;
+use App\ValueObject\User\Password;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,15 +47,17 @@ class RegistrationController extends AbstractController
     {
         try {
             $data = $this->getJsonBodyFields($request, ['email', 'password', 'name']);
-        } catch (BadRequestHttpException $e) {
-            return $this->errBadRequest($e->getMessage());
-        }
 
-        $userDTO = new UserDTO($data);
+            $userDTO = new UserDTO(
+                new Password($data['password']),
+                new Email($data['email']),
+                new Name($data['name'])
+            );
 
-        try {
             $userDTO->validate();
             $user = $this->registrationsService->register($userDTO);
+        } catch (BadRequestHttpException $e) {
+            return $this->errBadRequest($e->getMessage());
         } catch (ValidationException $e) {
             return $this->errBadRequest($e->getMessage(), $e->getErrors());
         } catch (IdentityAlreadyExistsException $e) {

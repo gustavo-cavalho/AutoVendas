@@ -32,4 +32,9 @@ class VehicleDTO implements DTOInterface
     {
         return new Vehicle();
     }
+
+    public function getIdentifier(): string
+    {
+        return 'plate';
+    }
 }
