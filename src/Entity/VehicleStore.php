@@ -61,6 +61,11 @@ class VehicleStore
      */
     private $address;
 
+    /**
+     * @ORM\Column(type="string", length=20)
+     */
+    private $status;
+
     public function __construct()
     {
         $this->employers = new ArrayCollection();
@@ -224,6 +229,18 @@ class VehicleStore
         }
 
         $this->address = $address;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }
