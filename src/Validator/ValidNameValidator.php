@@ -17,7 +17,7 @@ class ValidNameValidator extends ConstraintValidator
             return;
         }
 
-        if (preg_match()) {
+        if (preg_match(self::ONLY_LETTER_RGX, $value)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ value }}', $value)
                 ->addViolation();
