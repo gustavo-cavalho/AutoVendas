@@ -20,5 +20,5 @@ interface RegistrationsServiceInterface
      *
      * @throws IdentityAlreadyExistsException if the user already exists
      */
-    public function register(UserDTO $userDTO): User;
+    public function register(UserDTOInterface $userDTO): User;
 }

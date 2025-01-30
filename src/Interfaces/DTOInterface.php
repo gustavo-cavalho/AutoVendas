@@ -25,4 +25,10 @@ interface DTOInterface
      * @throws ValidationException if validation fails
      */
     public function validate(): void;
+
+    /**
+     * Get identifier of the DTO
+     * Can be a email, plate e etc.
+     */
+    public function getIdentifier();
 }

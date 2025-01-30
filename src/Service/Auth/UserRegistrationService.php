@@ -6,6 +6,7 @@ use App\DTO\UserDTO;
 use App\Entity\User;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Interfaces\Auth\RegistrationsServiceInterface;
+use App\Interfaces\Auth\UserDTOInterface;
 use App\Repository\UserRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -38,9 +39,9 @@ class UserRegistrationService implements RegistrationsServiceInterface
      *
      * @see App\Interfaces\RegistrationsServiceInterface
      */
-    public function register(UserDTO $userDTO): User
+    public function register(UserDTOInterface $userDTO): User
     {
-        $user = $this->userRepository->findByEmail($userDTO->getEmail());
+        $user = $this->userRepository->findByEmail($userDTO->getIdentifier());
         if ($user) {
             throw new IdentityAlreadyExistsException('User already exists');
         }

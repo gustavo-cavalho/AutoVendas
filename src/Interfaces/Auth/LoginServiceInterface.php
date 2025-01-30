@@ -18,5 +18,5 @@ interface LoginServiceInterface
      *
      * @throws InvalidCredentialsException if password or email is invalid
      */
-    public function autenticate(UserDTO $payload): string;
+    public function autenticate(UserDTOInterface $payload): string;
 }

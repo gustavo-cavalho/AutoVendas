@@ -2,9 +2,9 @@
 
 namespace App\Service\Auth;
 
-use App\DTO\UserDTO;
 use App\Exceptions\InvalidCredentialsException;
 use App\Interfaces\Auth\LoginServiceInterface;
+use App\Interfaces\Auth\UserDTOInterface;
 use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -25,15 +25,15 @@ class JWTService implements LoginServiceInterface
         $this->passwordHasher = $passwordHasher;
     }
 
-    public function autenticate(UserDTO $payload): string
+    public function autenticate(UserDTOInterface $payload): string
     {
-        $user = $this->userRepository->findByEmail($payload->getEmail());
+        $user = $this->userRepository->findByEmail($payload->getIdentifier());
 
         if (!$user) {
-            throw new InvalidCredentialsException('User not found with email: '.$payload->getEmail());
+            throw new InvalidCredentialsException('User not found with email: '.$payload->getIdentifier());
         }
 
-        if (!$this->passwordHasher->isPasswordValid($user, $payload->getPassword()->getValue())) {
+        if (!$this->passwordHasher->isPasswordValid($user, $payload->getPassword())) {
             throw new InvalidCredentialsException('Invalid password');
         }
 
