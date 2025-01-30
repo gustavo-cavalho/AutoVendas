@@ -2,6 +2,8 @@
 
 namespace App\Interfaces;
 
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 /**
  * Interface to define a Data Transfer Object.
  *
@@ -20,11 +22,11 @@ interface DTOInterface
     public function ToEntity(?array $options = null): object;
 
     /**
-     * Validade all fields in the DTO.
+     *  Uses the Symfony validator to validate the groups that're requested.
      *
-     * @throws ValidationException if validation fails
+     * @throws ValidationException if has any error
      */
-    public function validate(): void;
+    public function validate(ValidatorInterface $validator, array $groups): void;
 
     /**
      * Get identifier of the DTO
