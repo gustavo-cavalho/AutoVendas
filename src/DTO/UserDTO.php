@@ -5,26 +5,30 @@ namespace App\DTO;
 use App\Entity\User;
 use App\Exceptions\ValidationException;
 use App\Interfaces\Auth\UserDTOInterface;
-use App\ValueObject\User\Email;
-use App\ValueObject\User\Name;
-use App\ValueObject\User\Password;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserDTO implements UserDTOInterface
 {
-    /**
-     * @see App\ValueObject\Email
-     */
-    private Email $email;
+    public const IS_VALID_TO_LOGIN = ['login'];
+    public const IS_VALID_TO_REGISTER = ['registration'];
 
     /**
-     * @see App\ValueObject\Password
+     * @Assert\Email(groups={"registration", "login"})
      */
-    private Password $password;
+    private string $email;
 
     /**
-     * @see App\ValueObject\Name
+     * @Assert\StrongPassword(groups={"registration", "login})
      */
-    private Name $name;
+    private string $password;
+
+    /**
+     * @Assert\Length(max=255)
+     *
+     * @Assert\ValidName(groups={"registration"})
+     */
+    private string $name;
 
     public function __construct($email, $password, $name)
     {
@@ -47,9 +51,9 @@ class UserDTO implements UserDTOInterface
         $user = new User();
 
         $user
-            ->setEmail($this->email->getValue())
-            ->setPassword($this->password->getValue())
-            ->setName($this->name->getValue());
+            ->setEmail($this->email)
+            ->setPassword($this->password)
+            ->setName($this->name);
 
         if (isset($options['roles'])) {
             $roles = $options['roles'];
@@ -69,34 +73,22 @@ class UserDTO implements UserDTOInterface
      *
      * @see App\Interfaces\DTOInterface
      */
-    public function validate(): void
+    public function validate(ValidatorInterface $validator, array $groups): void
     {
-        $err = [];
+        $erros = $validator->validate($this, null, $groups);
 
-        if (!$this->email->validate()) {
-            $err['email'] = 'Invalid email';
-        }
-
-        if (!$this->password->validate()) {
-            $err['password'] = 'Invalid password';
-        }
-
-        if (!$this->name->validate()) {
-            $err['name'] = 'Invalid Name';
-        }
-
-        if (!empty($err)) {
-            throw new ValidationException('Invalid data', array_filter($err));
+        if ($erros->count() > 0) {
+            throw new ValidationException('Invalid data', (array) $erros);
         }
     }
 
     public function getIdentifier(): string
     {
-        return $this->email->getValue();
+        return $this->email;
     }
 
     public function getPassword(): string
     {
-        return $this->password->getValue();
+        return $this->password;
     }
 }

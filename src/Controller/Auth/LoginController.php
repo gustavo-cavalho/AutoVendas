@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\DTO\UserDTO;
 use App\Exceptions\InvalidCredentialsException;
+use App\Exceptions\ValidationException;
 use App\Interfaces\Auth\LoginServiceInterface;
 use App\Repository\UserRepository;
 use App\Service\Auth\JWTService;
@@ -19,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class LoginController extends AbstractController
 {
@@ -26,13 +28,16 @@ class LoginController extends AbstractController
     use JsonRequestUtil;
 
     private LoginServiceInterface $loginService;
+    private ValidatorInterface $validator;
 
     public function __construct(
         JWTTokenManagerInterface $jwtManager,
         UserRepository $userRepository,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        ValidatorInterface $validator
     ) {
         $this->loginService = new JWTService($jwtManager, $userRepository, $passwordHasher);
+        $this->validator = $validator;
     }
 
     /**
@@ -49,9 +54,13 @@ class LoginController extends AbstractController
                 new Name($data['name'])
             );
 
+            $userDTO->validate($this->validator, UserDTO::IS_VALID_TO_LOGIN);
+
             $token = $this->loginService->autenticate($userDTO);
         } catch (BadRequestHttpException $e) {
             return $this->errBadRequest($e->getMessage());
+        } catch (ValidationException $e) {
+            return $this->errBadRequest($e->getMessage(), $e->getErrors());
         } catch (InvalidCredentialsException $e) {
             return $this->errBadRequest($e->getMessage());
         }

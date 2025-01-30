@@ -22,6 +22,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface as SymfonySerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -30,14 +31,17 @@ class RegistrationController extends AbstractController
 
     private RegistrationsServiceInterface $registrationsService;
     private SerializerInterface $serializer;
+    private ValidatorInterface $validator;
 
     public function __construct(
         UserRepository $userRepository,
         UserPasswordHasherInterface $passwordHasher,
-        SymfonySerializerInterface $serializer
+        SymfonySerializerInterface $serializer,
+        ValidatorInterface $validator
     ) {
         $this->registrationsService = new UserRegistrationService($userRepository, $passwordHasher);
         $this->serializer = new UserSerializerService($serializer);
+        $this->validator = $validator;
     }
 
     /**
@@ -54,7 +58,8 @@ class RegistrationController extends AbstractController
                 new Name($data['name'])
             );
 
-            $userDTO->validate();
+            $userDTO->validate($this->validator, UserDTO::IS_VALID_TO_REGISTER);
+
             $user = $this->registrationsService->register($userDTO);
         } catch (BadRequestHttpException $e) {
             return $this->errBadRequest($e->getMessage());

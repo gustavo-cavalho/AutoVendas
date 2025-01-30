@@ -4,6 +4,7 @@ namespace App\DTO;
 
 use App\Entity\Vehicle;
 use App\Interfaces\DTOInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Represents a vehicle.
@@ -15,7 +16,7 @@ class VehicleDTO implements DTOInterface
      *
      * @see App\Interfaces\DTOInterface
      */
-    public function validate(): void
+    public function validate(ValidatorInterface $validator, array $groups): void
     {
     }
 
