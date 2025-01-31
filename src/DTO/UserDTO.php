@@ -5,13 +5,14 @@ namespace App\DTO;
 use App\Entity\User;
 use App\Exceptions\ValidationException;
 use App\Interfaces\Auth\UserDTOInterface;
+use App\Validator as Ensure;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserDTO implements UserDTOInterface
 {
-    public const IS_VALID_TO_LOGIN = ['login'];
-    public const IS_VALID_TO_REGISTER = ['registration'];
+    public const TO_LOGIN = 'login';
+    public const TO_REGISTER = 'registration';
 
     /**
      * @Assert\Email(groups={"registration", "login"})
@@ -19,18 +20,18 @@ class UserDTO implements UserDTOInterface
     private string $email;
 
     /**
-     * @Assert\StrongPassword(groups={"registration", "login})
+     * @Ensure\StrongPassword(groups={"registration", "login"})
      */
     private string $password;
 
     /**
      * @Assert\Length(max=255)
      *
-     * @Assert\ValidName(groups={"registration"})
+     * @Ensure\ValidName(groups={"registration"})
      */
-    private string $name;
+    private ?string $name;
 
-    public function __construct($email, $password, $name)
+    public function __construct($email, $password, $name = null)
     {
         $this->email = $email;
         $this->password = $password;
@@ -73,7 +74,7 @@ class UserDTO implements UserDTOInterface
      *
      * @see App\Interfaces\DTOInterface
      */
-    public function validate(ValidatorInterface $validator, array $groups): void
+    public function validate(ValidatorInterface $validator, $groups): void
     {
         $erros = $validator->validate($this, null, $groups);
 

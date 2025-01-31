@@ -15,6 +15,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class AddressDTO implements DTOInterface
 {
     /**
+     * must normalize the cep to store only
+     * the numbes without the especial chars.
+     *
      * @Assert\NotBlank
      */
     private int $cep;
@@ -47,7 +50,7 @@ class AddressDTO implements DTOInterface
     private ?string $complement;
 
     public function __construct(
-        int $cep,
+        string $cep,
         string $street,
         int $number,
         string $neighborhood,
@@ -55,7 +58,7 @@ class AddressDTO implements DTOInterface
         string $state,
         ?string $complement = null
     ) {
-        $this->cep = $cep;
+        $this->cep = $this->normalizeCep($cep);
         $this->street = $street;
         $this->number = $number;
         $this->neighborhood = $neighborhood;
@@ -99,6 +102,11 @@ class AddressDTO implements DTOInterface
      */
     public function getIdentifier(): void
     {
+    }
+
+    private function normalizeCep(string $cepWithEspecialChars): int
+    {
+        return (int) str_replace(['-', ' '], '', $cepWithEspecialChars);
     }
 
     public function getCep(): int

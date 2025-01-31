@@ -2,7 +2,6 @@
 
 namespace App\DTO;
 
-use App\Entity\Vehicle;
 use App\Entity\VehicleStore;
 use App\Exceptions\ValidationException;
 use App\Interfaces\DTOInterface;
