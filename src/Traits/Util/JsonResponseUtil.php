@@ -123,4 +123,14 @@ trait JsonResponseUtil
     {
         return $this->failureResponse($message, [], Response::HTTP_UNAUTHORIZED);
     }
+
+    /**
+     * Response with status 409.
+     *
+     * @see failureResponse
+     */
+    public function errConflict(string $message): JsonResponse
+    {
+        return $this->failureResponse($message, [], Response::HTTP_CONFLICT);
+    }
 }
