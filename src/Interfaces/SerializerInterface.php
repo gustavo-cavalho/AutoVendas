@@ -10,10 +10,10 @@ interface SerializerInterface
     /**
      * Serialize an object to an array by groups.
      *
-     * @param object $object to be serialized
-     * @param array  $groups the groups to be serialized
+     * @param object|array $object to be serialized
+     * @param array        $groups the groups to be serialized
      *
      * @return array an associative array of serialized data
      */
-    public function serialize(object $object, array $groups = []): array;
+    public function serialize($object, array $groups = []): array;
 }
