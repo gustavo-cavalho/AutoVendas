@@ -59,10 +59,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findByEmail(string $email): ?User
     {
         return $this->getEntityManager()
-            ->createQuery('
-                SELECT u FROM App\Entity\User u
-                WHERE u.email = :email
-            ')
+            ->createQuery(
+                'SELECT u FROM App\Entity\User u
+                    WHERE u.email = :email'
+            )
             ->setParameter('email', $email)
             ->getOneOrNullResult();
     }
