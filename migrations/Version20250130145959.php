@@ -88,7 +88,7 @@ final class Version20250130145959 extends AbstractMigration
             'CREATE TABLE vehicle_store (
                 id INT AUTO_INCREMENT NOT NULL,
                 credencial VARCHAR(20) NOT NULL,
-                phone VARCHAR(13) NOT NULL,
+                phone VARCHAR(15) NOT NULL,
                 email VARCHAR(255) NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 PRIMARY KEY(id)
