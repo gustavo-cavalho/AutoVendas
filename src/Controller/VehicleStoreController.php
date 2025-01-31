@@ -38,7 +38,7 @@ class VehicleStoreController extends AbstractController
     }
 
     /**
-     * @Route("/store", name="register_store", method={"POST"})
+     * @Route("/store", name="register_store", methods={"POST"})
      */
     public function register(Request $request): JsonResponse
     {
@@ -66,7 +66,7 @@ class VehicleStoreController extends AbstractController
     }
 
     /**
-     * @Route("/store/{id}", name="update_store", method={"PUT"})
+     * @Route("/store/{id}", name="update_store", methods={"PUT"})
      */
     public function update(Request $request, int $id): JsonResponse
     {
@@ -92,7 +92,7 @@ class VehicleStoreController extends AbstractController
     }
 
     /**
-     * @Route("/store", name="index_store", method={"GET"})
+     * @Route("/store", name="index_store", methods={"GET"})
      */
     public function index(): JsonResponse
     {
@@ -102,7 +102,7 @@ class VehicleStoreController extends AbstractController
     }
 
     /**
-     * @Route("/store/{id}", name="show_soter", method={"GET"})
+     * @Route("/store/{id}", name="show_store", methods={"GET"})
      */
     public function show(int $id): JsonResponse
     {
