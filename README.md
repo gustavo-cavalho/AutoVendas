@@ -83,9 +83,9 @@ AutoVendas/
 
 - [ ] CRUD Veículo
 
-### Gestão de Revendedoras
+### Gestão de Lojas
 
-- [ ] CRUD Revendedora
+- [x] CRUD lojas
 - [ ] Gerir os funcionários
 - [ ] Gerir estoque de veículos
 
