@@ -4,7 +4,7 @@ namespace App\Service;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class APIClientService
+class ApiClientService
 {
     private HttpClientInterface $httpClient;
     private string $baseUrl;
