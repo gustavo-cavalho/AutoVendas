@@ -3,11 +3,15 @@
 namespace App\Controller;
 
 use App\DTO\AddressDTO;
+use App\DTO\VehicleDTO;
 use App\DTO\VehicleStoreDTO;
+use App\Entity\VehicleStore;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Exceptions\ValidationException;
 use App\Interfaces\CrudServiceInterface;
+use App\Interfaces\SerializerInterface;
 use App\Repository\VehicleStoreRepository;
+use App\Service\SerializerService;
 use App\Service\VehicleStoreService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
@@ -17,12 +21,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface as SymfonySerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-/**
- * PEGAR UMA:
- * PEGAR TODAS:
- */
 class VehicleStoreController extends AbstractController
 {
     use JsonRequestUtil;
@@ -30,21 +31,26 @@ class VehicleStoreController extends AbstractController
 
     private ValidatorInterface $validator;
     private CrudServiceInterface $crudService;
+    private SerializerInterface $serializer;
 
-    public function __construct(ValidatorInterface $validator, VehicleStoreRepository $repository)
-    {
+    public function __construct(
+        ValidatorInterface $validator,
+        VehicleStoreRepository $repository,
+        SymfonySerializerInterface $serializer
+    ) {
         $this->validator = $validator;
         $this->crudService = new VehicleStoreService($repository);
+        $this->serializer = new SerializerService($serializer, VehicleDTO::class);
     }
 
     /**
      * @Route("/store", name="register_store", methods={"POST"})
      */
-    public function register(Request $request): JsonResponse
+    public function register(Request $request)
     {
-        // TODO: Check permission
-
         try {
+            // TODO: Check permission
+
             $vehicleStoreData = $this->getJsonBodyFields($request, ['credencial', 'phone', 'email', 'name']);
             $addressData = $this->getJsonBodyFields($request, ['cep', 'street', 'number', 'neighborhood', 'city', 'state', 'complement']);
 
@@ -55,6 +61,8 @@ class VehicleStoreController extends AbstractController
 
             $vehicleStore = $this->crudService->create($vehicleStoreDTO);
 
+            $vehicleStore = $this->serializer->serialize($vehicleStore, [VehicleStore::SERIALIZE_SHOW]);
+
             return $this->statusCreated('Store created!', $vehicleStore);
         } catch (BadRequestHttpException $e) {
             return $this->errBadRequest($e->getMessage());
@@ -62,6 +70,8 @@ class VehicleStoreController extends AbstractController
             return $this->errBadRequest($e->getMessage(), $e->getErrors());
         } catch (IdentityAlreadyExistsException $e) {
             return $this->errConflict($e->getMessage());
+        } catch (\Exception $e) {
+            return $this->errInteralServer('Sorry, but some error just ocurred. :(');
         }
     }
 
@@ -88,6 +98,8 @@ class VehicleStoreController extends AbstractController
             return $this->errBadRequest($e->getMessage(), $e->getErrors());
         } catch (NotFoundHttpException $e) {
             return $this->errNotFound($e->getMessage());
+        } catch (\Exception $e) {
+            return $this->errInteralServer('Sorry, but some error just ocurred. :(');
         }
     }
 
@@ -97,6 +109,11 @@ class VehicleStoreController extends AbstractController
     public function index(): JsonResponse
     {
         $vehicleStores = $this->crudService->findAll();
+
+        $vehicleStores = $this->serializer->serialize(
+            $vehicleStores,
+            [VehicleStore::SERIALIZE_INDEX]
+        );
 
         return $this->statusOk('Get all stores.', $vehicleStores);
     }
@@ -109,9 +126,16 @@ class VehicleStoreController extends AbstractController
         try {
             $vehicleStore = $this->crudService->find($id);
 
+            $vehicleStore = $this->serializer->serialize(
+                $vehicleStore,
+                [VehicleStore::SERIALIZE_SHOW]
+            );
+
             return $this->statusOk('Founded the store!', $vehicleStore);
         } catch (NotFoundHttpException $e) {
             return $this->errNotFound($e->getMessage());
+        } catch (\Exception $e) {
+            return $this->errInteralServer('Sorry, but some error just ocurred. :(');
         }
     }
 

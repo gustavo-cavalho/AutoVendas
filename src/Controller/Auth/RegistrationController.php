@@ -3,18 +3,16 @@
 namespace App\Controller\Auth;
 
 use App\DTO\UserDTO;
+use App\Entity\User;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Exceptions\ValidationException;
 use App\Interfaces\Auth\RegistrationsServiceInterface;
 use App\Interfaces\SerializerInterface;
 use App\Repository\UserRepository;
 use App\Service\Auth\UserRegistrationService;
-use App\Service\UserSerializerService;
+use App\Service\SerializerService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
-use App\ValueObject\User\Email;
-use App\ValueObject\User\Name;
-use App\ValueObject\User\Password;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +38,7 @@ class RegistrationController extends AbstractController
         ValidatorInterface $validator
     ) {
         $this->registrationsService = new UserRegistrationService($userRepository, $passwordHasher);
-        $this->serializer = new UserSerializerService($serializer);
+        $this->serializer = new SerializerService($serializer, UserDTO::class);
         $this->validator = $validator;
     }
 
@@ -53,24 +51,28 @@ class RegistrationController extends AbstractController
             $data = $this->getJsonBodyFields($request, ['email', 'password', 'name']);
 
             $userDTO = new UserDTO(
-                new Password($data['password']),
-                new Email($data['email']),
-                new Name($data['name'])
+                $data['email'],
+                $data['password'],
+                $data['name']
             );
 
-            $userDTO->validate($this->validator, UserDTO::IS_VALID_TO_REGISTER);
+            $userDTO->validate($this->validator, UserDTO::TO_REGISTER);
 
             $user = $this->registrationsService->register($userDTO);
+
+            $user = $this->serializer->serialize(
+                $user, [User::SERIALIZE_SHOW]
+            );
+
+            return $this->statusCreated('User created', $user);
         } catch (BadRequestHttpException $e) {
             return $this->errBadRequest($e->getMessage());
         } catch (ValidationException $e) {
             return $this->errBadRequest($e->getMessage(), $e->getErrors());
         } catch (IdentityAlreadyExistsException $e) {
-            return $this->errBadRequest($e->getMessage());
+            return $this->errConflict($e->getMessage());
+        } catch (\Exception $e) {
+            return $this->errInteralServer('Sorry, but some error just ocurred. :(');
         }
-
-        $user = $this->serializer->serialize($user, ['show_user']);
-
-        return $this->statusCreated('User created', $user);
     }
 }
