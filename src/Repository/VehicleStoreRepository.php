@@ -39,20 +39,20 @@ class VehicleStoreRepository extends ServiceEntityRepository
         }
     }
 
-    //    /**
-    //     * @return VehicleStore[] Returns an array of VehicleStore objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * @return VehicleStore|null Returns a VehicleStore objects or null
+     */
+    public function findByCredencial(string $credencial): ?VehicleStore
+    {
+        return $this->getEntityManager()
+             ->createQuery(
+                 'SELECT s FROM App\Entity\VehicleStore s
+                        WHERE s.credencial = :credencial'
+             )
+             ->setParameter('credencial', $credencial)
+             ->getOneOrNullResult()
+        ;
+    }
 
     //    public function findOneBySomeField($value): ?VehicleStore
     //    {
