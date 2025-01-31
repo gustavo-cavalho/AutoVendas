@@ -29,7 +29,7 @@ class JWTService implements LoginServiceInterface
     {
         $user = $this->userRepository->findByEmail($payload->getIdentifier());
 
-        if (!$user) {
+        if (is_null($user)) {
             throw new InvalidCredentialsException('User not found with email: '.$payload->getIdentifier());
         }
 

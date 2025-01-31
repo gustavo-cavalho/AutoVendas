@@ -42,7 +42,7 @@ class UserRegistrationService implements RegistrationsServiceInterface
     public function register(UserDTOInterface $userDTO): User
     {
         $user = $this->userRepository->findByEmail($userDTO->getIdentifier());
-        if ($user) {
+        if (!is_null($user)) {
             throw new IdentityAlreadyExistsException('User already exists');
         }
 
