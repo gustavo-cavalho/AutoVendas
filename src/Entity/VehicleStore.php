@@ -6,13 +6,22 @@ use App\Repository\VehicleStoreRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=VehicleStoreRepository::class)
  */
 class VehicleStore
 {
+    public const SERIALIZE_SHOW = 'show_store';
+    public const SERIALIZE_INDEX = 'index_store';
+
+    public const STATUS_ACTIVE = 'ACTIVE';
+    public const STATUS_DISABLE = 'DISABLE';
+
     /**
+     * @Groups({"show_store", "index_store"})
+     *
      * @ORM\Id
      *
      * @ORM\GeneratedValue
@@ -23,54 +32,73 @@ class VehicleStore
 
     /**
      * @ORM\Column(type="string", length=20)
+     *
+     * @Groups({"show_store"})
      */
     private $credencial;
 
     /**
-     * @ORM\OneToMany(targetEntity=Vehicle::class, mappedBy="VehicleStore")
+     * @ORM\OneToMany(targetEntity=Vehicle::class, mappedBy="vehicleStore")
+     *
+     * @Groups({"show_store", "admin_store"})
      */
     private $vehicleStock;
 
     /**
-     * @ORM\OneToMany(targetEntity=user::class, mappedBy="VehicleStore")
+     * @ORM\OneToMany(targetEntity=user::class, mappedBy="vehicleStore")
+     *
+     * @Groups({"show_store", "admin_store"})
      */
     private $employers;
 
     /**
      * @ORM\OneToMany(targetEntity=Ad::class, mappedBy="advertiserStore", orphanRemoval=true)
+     *
+     * @Groups({"show_store", "admin_store"})
      */
     private $ads;
 
     /**
-     * @ORM\Column(type="string", length=13)
+     * @ORM\Column(type="string", length=15)
+     *
+     * @Groups({"show_store"})
      */
     private $phone;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Groups({"show_store"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Groups({"show_store", "index_store"})
      */
     private $name;
 
     /**
-     * @ORM\OneToOne(targetEntity=Address::class, mappedBy="storeId", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Address::class, mappedBy="vehicleStore", cascade={"persist", "remove"})
+     *
+     * @Groups({"show_store", "index_store"})
      */
     private $address;
 
     /**
      * @ORM\Column(type="string", length=20)
+     *
+     * @Groups({"show_store"})
      */
-    private $status;
+    private $status = self::STATUS_ACTIVE;
 
     public function __construct()
     {
         $this->employers = new ArrayCollection();
         $this->vehicleStock = new ArrayCollection();
         $this->ads = new ArrayCollection();
+        $this->status = self::STATUS_ACTIVE;
     }
 
     public function getId(): ?int

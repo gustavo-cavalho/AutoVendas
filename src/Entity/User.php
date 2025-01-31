@@ -13,6 +13,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const SERIALIZE_SHOW = 'show_user';
+
     /**
      * @ORM\Id
      *

@@ -4,8 +4,11 @@ namespace App\Entity;
 
 use App\Repository\AddressRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * VehicleStore show_store, index_store.
+ *
  * @ORM\Entity(repositoryClass=AddressRepository::class)
  */
 class Address
@@ -23,40 +26,56 @@ class Address
      * @ORM\OneToOne(targetEntity=VehicleStore::class, inversedBy="address", cascade={"persist", "remove"})
      *
      * @ORM\JoinColumn(nullable=false)
+     *
+     * @Groups({"address_store"})
      */
     private $vehicleStore;
     /**
      * @ORM\Column(type="integer")
+     *
+     * @Groups({"show_store","address_store"})
      */
     private $cep;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Groups({"index_store", "show_store"})
      */
     private $street;
 
     /**
      * @ORM\Column(type="integer")
+     *
+     * @Groups({"index_store", "show_store","address_store"})
      */
     private $number;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Groups({"index_store", "show_store","address_store"})
      */
     private $neighborhood;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Groups({"index_store", "show_store","address_store"})
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Groups({"index_store", "show_store","address_store"})
      */
     private $state;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @Groups({"show_store","address_store"})
      */
     private $complement;
 
