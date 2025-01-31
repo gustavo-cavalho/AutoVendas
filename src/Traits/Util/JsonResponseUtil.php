@@ -94,6 +94,11 @@ trait JsonResponseUtil
 
     // /// Errors Response /////
 
+    public function errInteralServer(string $message): JsonResponse
+    {
+        return $this->failureResponse($message, [], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
     /**
      * Response with status 400.
      *
