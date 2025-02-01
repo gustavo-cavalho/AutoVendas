@@ -3,7 +3,9 @@
 namespace App\Validator;
 
 use App\DTO\AddressDTO;
-use App\Service\ApiClientService;
+use App\Exceptions\ValidationException;
+use App\Service\Api\ApiClientService;
+use App\Service\Api\CepApiService;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -16,9 +18,9 @@ class AddressMatchesCepValidator extends ConstraintValidator
 
     private ApiClientService $apiClient;
 
-    public function __construct(HttpClientInterface $httpClientInterface)
+    public function __construct(HttpClientInterface $httpClient)
     {
-        $this->apiClient = new ApiClientService($httpClientInterface, 'https://opencep.com/v1');
+        $this->apiClient = new CepApiService($httpClient);
     }
 
     public function validate($value, Constraint $constraint)
@@ -46,43 +48,12 @@ class AddressMatchesCepValidator extends ConstraintValidator
             return;
         }
 
-        $streetSimilarity = $this->calculateSimilarity($value->getStreet(), $response['logradouro']);
-        $neighborhoodSimilarity = $this->calculateSimilarity($value->getNeighborhood(), $response['bairro']);
-        $citySimilarity = $this->calculateSimilarity($value->getCity(), $response['localidade']);
-        $stateSimilarity = $this->calculateSimilarity($value->getState(), $response['uf']);
-
-        if ($streetSimilarity < self::MIN_SIMILARITY_REQ) {
-            $this->context->buildViolation('The name is too diferent from the expected.')
-                ->atPath('street')
+        try {
+            $this->apiClient->validate($value);
+        } catch (ValidationException $e) {
+            $this->context->buildViolation($e->getMessage())
+                ->atPath('address')
                 ->addViolation();
         }
-
-        if ($neighborhoodSimilarity < self::MIN_SIMILARITY_REQ) {
-            $this->context->buildViolation('The name is too diferent from the expected.')
-                ->atPath('neighborhood')
-                ->addViolation();
-        }
-
-        if ($citySimilarity < self::MIN_SIMILARITY_REQ) {
-            $this->context->buildViolation('The name is too diferent from the expected.')
-                ->atPath('city')
-                ->addViolation();
-        }
-
-        if ($stateSimilarity < self::MIN_SIMILARITY_REQ) {
-            $this->context->buildViolation('The name is too diferent from the expected.')
-                ->atPath('state')
-                ->addViolation();
-        }
-    }
-
-    /**
-     * Calcula a similaridade entre duas strings.
-     */
-    private function calculateSimilarity(string $string1, string $string2): float
-    {
-        similar_text(strtolower($string1), strtolower($string2), $percent);
-
-        return $percent;
     }
 }
