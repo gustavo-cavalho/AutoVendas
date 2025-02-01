@@ -36,7 +36,7 @@ class VehicleStoreService implements CrudServiceInterface
     public function update(int $id, DTOInterface $dto): VehicleStore
     {
         $vehicleStore = $this->repository->find($id);
-        if (!$vehicleStore) {
+        if (is_null($vehicleStore)) {
             throw new NotFoundHttpException('Can\'t found this store.');
         }
 
@@ -48,7 +48,7 @@ class VehicleStoreService implements CrudServiceInterface
     public function delete(int $id): void
     {
         $vehicleStore = $this->repository->find($id);
-        if (!$vehicleStore) {
+        if (is_null($vehicleStore)) {
             throw new NotFoundHttpException('Can\'t found this store.');
         }
 
@@ -58,7 +58,7 @@ class VehicleStoreService implements CrudServiceInterface
     public function find(int $id)
     {
         $store = $this->repository->find($id);
-        if (!$store) {
+        if (is_null($store)) {
             throw new NotFoundHttpException('Can\t find this store.');
         }
 
