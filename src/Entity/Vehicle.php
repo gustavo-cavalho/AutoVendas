@@ -10,6 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Vehicle
 {
+    public const TYPE_CAR = 'carros';
+    public const TYPE_MOTORCYCLE = 'motos';
+    public const TYPE_TRUCK = 'caminhoes';
+
     /**
      * @ORM\Id
      *
