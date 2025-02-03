@@ -48,7 +48,7 @@ class FipeApiService extends ApiClientService
          * The 'modelos' after the get($url) is used because the route returns an object with
          * 'anos' and 'modelos', where 'modelos' is an array of objects containing 'codigo' and 'nome'.
          */
-        $url += "/{$value->getBrandIntegration()}/modelos";
+        $url .= "/{$value->getBrandIntegration()}/modelos";
         $models = $this->get($url)['modelos'];
         $result = $this->lookFor($models, $value->getModel());
         if (empty($result)) {
@@ -59,7 +59,7 @@ class FipeApiService extends ApiClientService
         /*
          * This route returns an array of objects containing 'codigo' and 'nome' fields.
          */
-        $url += "/{$value->getModelIntegration()}/anos";
+        $url .= "/{$value->getModelIntegration()}/anos";
         $years = $this->get($url);
         $result = $this->lookFor($years, $value->getManufacturedYear());
         if (empty($result)) {
@@ -128,8 +128,16 @@ class FipeApiService extends ApiClientService
      */
     private function lookFor(array $data, $value, string $field = 'nome'): array
     {
-        return array_filter($data, function ($item) use ($value, $field) {
-            return strtolower($item[$field]) === strtolower($value);
-        });
+        /*
+         * The "array_value(...)[0]" is needed cause the function wiithout it returns:
+         *   { [34]=> array(2) { ["codigo"]=> string(2) "22" ["nome"]=> string(4) "Ford" } }
+         * But, with the "array_value(...)[0]" it retuns:
+         *   array(2) { ["codigo"]=> string(2) "22" ["nome"]=> string(4) "Ford" }
+         */
+        return array_values(
+            array_filter($data, function ($item) use ($value, $field) {
+                return strtolower($item[$field]) === strtolower($value);
+            })
+        )[0];
     }
 }
