@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\DTO\VehicleDTO;
 use App\Entity\Vehicle;
+use App\Entity\VehicleStore;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Interfaces\DTOInterface;
 use App\Repository\VehicleRepository;
@@ -33,7 +34,14 @@ class VehicleService extends AbstractCrudService
             throw new IdentityAlreadyExistsException('A vehicle with this plate already exists.');
         }
 
+        /** @var VehicleStore $vehicleStore */
+        $vehicleStore = $this->em->getRepository(VehicleStore::class)->find($dto->getVehicleStoreId());
+        if (is_null($vehicleStore)) {
+            throw new NotFoundHttpException('Can\'t find the store');
+        }
+
         $vehicle = $dto->ToEntity();
+        $vehicleStore->addVehicleStock($vehicle);
 
         $this->repo->add($vehicle, true);
 
