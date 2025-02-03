@@ -12,7 +12,7 @@ class CepApiService extends ApiClientService
 
     public function __construct(HttpClientInterface $httpClient)
     {
-        parent::__construct($httpClient, 'https://parallelum.com.br/fipe/api/v1');
+        parent::__construct($httpClient, 'https://opencep.com/v1');
     }
 
     /**

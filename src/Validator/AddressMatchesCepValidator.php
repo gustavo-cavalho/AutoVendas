@@ -3,19 +3,17 @@
 namespace App\Validator;
 
 use App\DTO\AddressDTO;
-use App\Exceptions\ValidationException;
 use App\Service\Api\ApiClientService;
 use App\Service\Api\CepApiService;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
+use Symfony\Component\Validator\Exception\ValidatorException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AddressMatchesCepValidator extends ConstraintValidator
 {
-    private const MIN_SIMILARITY_REQ = 85;
-
     private ApiClientService $apiClient;
 
     public function __construct(HttpClientInterface $httpClient)
@@ -50,7 +48,7 @@ class AddressMatchesCepValidator extends ConstraintValidator
 
         try {
             $this->apiClient->validate($value);
-        } catch (ValidationException $e) {
+        } catch (ValidatorException $e) {
             $this->context->buildViolation($e->getMessage())
                 ->atPath('address')
                 ->addViolation();
