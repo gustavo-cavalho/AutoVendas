@@ -3,14 +3,12 @@
 namespace App\Service\Api;
 
 use App\Interfaces\ApiServiceInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 abstract class ApiClientService implements ApiServiceInterface
 {
     private HttpClientInterface $httpClient;
     private string $baseUrl;
-    private LoggerInterface $logger;
 
     public function __construct(HttpClientInterface $httpClient, string $baseUrl)
     {
