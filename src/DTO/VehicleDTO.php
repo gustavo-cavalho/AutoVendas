@@ -118,7 +118,10 @@ class VehicleDTO extends AbstractDTO
             ->setModel($this->model)
             ->setManufacturedYear($this->manufacturedYear)
             ->setMileage($this->mileage)
-            ->setLicensePlate($this->licensePlate);
+            ->setLicensePlate($this->licensePlate)
+            ->setBrandIntegration($this->getBrandIntegration())
+            ->setYearIntegration($this->getYearIntegration())
+            ->setModelIntegration($this->getModelIntegration());
     }
 
     public function getIdentifier(): string
