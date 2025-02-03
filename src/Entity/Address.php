@@ -33,49 +33,49 @@ class Address
     /**
      * @ORM\Column(type="integer")
      *
-     * @Groups({"show_store","address_store"})
+     * @Groups({"store:show","store:index"})
      */
     private $cep;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"index_store", "show_store"})
+     * @Groups({"store:show"})
      */
     private $street;
 
     /**
      * @ORM\Column(type="integer")
      *
-     * @Groups({"index_store", "show_store","address_store"})
+     * @Groups({"store:show"})
      */
     private $number;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"index_store", "show_store","address_store"})
+     * @Groups({"store:show"})
      */
     private $neighborhood;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"index_store", "show_store","address_store"})
+     * @Groups({"store:show", "store:index"})
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"index_store", "show_store","address_store"})
+     * @Groups({"store:show", "store:index"})
      */
     private $state;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *
-     * @Groups({"show_store","address_store"})
+     * @Groups({"store:show"})
      */
     private $complement;
 

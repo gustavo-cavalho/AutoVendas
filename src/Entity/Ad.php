@@ -4,18 +4,23 @@ namespace App\Entity;
 
 use App\Repository\AdRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=AdRepository::class)
  */
 class Ad
 {
+    public const SERIALIZE_SHOW = 'ad:show';
+
     /**
      * @ORM\Id
      *
      * @ORM\GeneratedValue
      *
      * @ORM\Column(type="integer")
+     *
+     * @Groups({"ad:show"})
      */
     private $id;
 
@@ -23,6 +28,8 @@ class Ad
      * @ORM\OneToOne(targetEntity=Vehicle::class, inversedBy="ad", cascade={"persist", "remove"})
      *
      * @ORM\JoinColumn(nullable=false)
+     *
+     * @Groups({"ad:show"})
      */
     private $vehicleAdvertised;
 
@@ -30,16 +37,22 @@ class Ad
      * @ORM\ManyToOne(targetEntity=VehicleStore::class, inversedBy="ads")
      *
      * @ORM\JoinColumn(nullable=false)
+     *
+     * @Groups({"ad:show"})
      */
     private $advertiserStore;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     *
+     * @Groups({"ad:show"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
+     *
+     * @Groups({"ad:show"})
      */
     private $price;
 
@@ -50,11 +63,15 @@ class Ad
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     *
+     * @Groups({"ad:show"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     *
+     * @Groups({"ad:show"})
      */
     private $updatedAt;
 
