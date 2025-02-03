@@ -3,17 +3,16 @@
 namespace App\Controller;
 
 use App\DTO\AddressDTO;
-use App\DTO\VehicleDTO;
 use App\DTO\VehicleStoreDTO;
 use App\Entity\VehicleStore;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Exceptions\ValidationException;
 use App\Interfaces\CrudServiceInterface;
 use App\Interfaces\SerializerInterface;
-use App\Service\SerializerService;
-use App\Service\VehicleStoreService;
+use App\Service\Crud\VehicleStoreService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
+use App\Traits\Util\SerializerUtil;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,13 +20,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface as SymfonySerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class VehicleStoreController extends AbstractController
 {
     use JsonRequestUtil;
     use JsonResponseUtil;
+    use SerializerUtil;
 
     private ValidatorInterface $validator;
     private CrudServiceInterface $crudService;
@@ -36,11 +35,11 @@ class VehicleStoreController extends AbstractController
     public function __construct(
         ValidatorInterface $validator,
         EntityManagerInterface $em,
-        SymfonySerializerInterface $serializer
+        SerializerInterface $serializer
     ) {
         $this->validator = $validator;
         $this->crudService = new VehicleStoreService($em);
-        $this->serializer = new SerializerService($serializer, VehicleDTO::class);
+        $this->serializer = $serializer;
     }
 
     /**
@@ -61,7 +60,7 @@ class VehicleStoreController extends AbstractController
 
             $vehicleStore = $this->crudService->create($vehicleStoreDTO);
 
-            $vehicleStore = $this->serializer->serialize($vehicleStore, [VehicleStore::SERIALIZE_SHOW]);
+            $vehicleStore = $this->serialize($vehicleStore, [VehicleStore::SERIALIZE_SHOW]);
 
             return $this->statusCreated('Store created!', $vehicleStore);
         } catch (BadRequestHttpException $e) {
@@ -91,6 +90,8 @@ class VehicleStoreController extends AbstractController
 
             $vehicleStore = $this->crudService->update($id, $vehicleStoreDTO);
 
+            $vehicleStore = $this->serialize($vehicleStore, [VehicleStore::SERIALIZE_SHOW]);
+
             return $this->statusCreated('Store updated!', $vehicleStore);
         } catch (BadRequestHttpException $e) {
             return $this->errBadRequest($e->getMessage());
@@ -110,10 +111,7 @@ class VehicleStoreController extends AbstractController
     {
         $vehicleStores = $this->crudService->findAll();
 
-        $vehicleStores = $this->serializer->serialize(
-            $vehicleStores,
-            [VehicleStore::SERIALIZE_INDEX]
-        );
+        $vehicleStores = $this->serialize($vehicleStores, [VehicleStore::SERIALIZE_INDEX]);
 
         return $this->statusOk('Get all stores.', $vehicleStores);
     }
@@ -126,10 +124,7 @@ class VehicleStoreController extends AbstractController
         try {
             $vehicleStore = $this->crudService->find($id);
 
-            $vehicleStore = $this->serializer->serialize(
-                $vehicleStore,
-                [VehicleStore::SERIALIZE_SHOW]
-            );
+            $vehicleStore = $this->serialize($vehicleStore, [VehicleStore::SERIALIZE_SHOW]);
 
             return $this->statusOk('Founded the store!', $vehicleStore);
         } catch (NotFoundHttpException $e) {

@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Crud;
 
 use App\DTO\AdDTO;
 use App\Entity\Ad;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Interfaces\DTOInterface;
 use App\Repository\AdRepository;
-use App\Service\Crud\AbstractCrudService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

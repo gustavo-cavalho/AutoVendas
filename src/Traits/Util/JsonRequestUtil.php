@@ -2,6 +2,7 @@
 
 namespace App\Traits\Util;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -28,6 +29,10 @@ trait JsonRequestUtil
      */
     protected function getJsonBodyFields(Request $request, array $requiredFields): array
     {
+        if (!$this instanceof AbstractController) {
+            throw new \LogicException('This trait should only be used in classes extending AbstractController.');
+        }
+
         $data = json_decode($request->getContent(), true);
 
         if (!$data) {

@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Crud;
 
 use App\DTO\VehicleStoreDTO;
 use App\Entity\VehicleStore;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Interfaces\DTOInterface;
 use App\Repository\VehicleStoreRepository;
-use App\Service\Crud\AbstractCrudService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

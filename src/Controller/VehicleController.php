@@ -3,10 +3,11 @@
 namespace App\Controller;
 
 use App\DTO\VehicleDTO;
+use App\Entity\Vehicle;
 use App\Exceptions\ValidationException;
 use App\Interfaces\CrudServiceInterface;
 use App\Service\Api\FipeApiService;
-use App\Service\VehicleService;
+use App\Service\Crud\VehicleService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,6 +16,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -26,15 +28,18 @@ class VehicleController extends AbstractController
     private CrudServiceInterface $crudService;
     private ValidatorInterface $validator;
     private FipeApiService $fipeApi;
+    private SerializerInterface $serializer;
 
     public function __construct(
         EntityManagerInterface $em,
         HttpClientInterface $httpClient,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        SerializerInterface $serializer
     ) {
         $this->crudService = new VehicleService($em);
         $this->validator = $validator;
         $this->fipeApi = new FipeApiService($httpClient);
+        $this->serializer = $serializer;
     }
 
     /**
@@ -52,7 +57,7 @@ class VehicleController extends AbstractController
 
             $vehicle = $this->crudService->create($vehicleDTO);
 
-            //  TODO: serialize
+            $vehicle = $this->serializer->serialize($vehicle, 'json', ['groups' => Vehicle::SERIALIZE_SHOW]);
 
             return $this->statusCreated('Vehicle registered sucefully!', $vehicle);
         } catch (BadRequestHttpException $e) {

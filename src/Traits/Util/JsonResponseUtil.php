@@ -2,6 +2,7 @@
 
 namespace App\Traits\Util;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -12,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Gustavo Carvalho
  *
- * @version 1.0
+ * @version 1.1
  */
 trait JsonResponseUtil
 {
@@ -27,6 +28,10 @@ trait JsonResponseUtil
      */
     private function successResponse(string $message, $data = [], int $status = Response::HTTP_OK): JsonResponse
     {
+        if (!$this instanceof AbstractController) {
+            throw new \LogicException('This trait should only be used in classes extending AbstractController.');
+        }
+
         $jsonResponse = [
             'message' => $message,
         ];
@@ -49,6 +54,10 @@ trait JsonResponseUtil
      */
     private function failureResponse(string $message, $errors = '', int $status = Response::HTTP_BAD_REQUEST): JsonResponse
     {
+        if (!$this instanceof AbstractController) {
+            throw new \LogicException('This trait should only be used in classes extending AbstractController.');
+        }
+
         $jsonResponse = [
             'message' => $message,
         ];

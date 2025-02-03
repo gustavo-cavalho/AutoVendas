@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\DTO\AdDTO;
 use App\Exceptions\ValidationException;
 use App\Interfaces\CrudServiceInterface;
-use App\Service\AdService;
+use App\Service\Crud\AdService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
 use Doctrine\ORM\EntityManagerInterface;
