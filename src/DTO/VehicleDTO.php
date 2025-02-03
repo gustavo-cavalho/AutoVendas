@@ -42,7 +42,7 @@ class VehicleDTO extends AbstractDTO
      *
      * @Assert\Length(max=50)
      */
-    private int $manufacturedYear;
+    private string $manufacturedYear;
 
     /**
      * @Assert\NotBlank
@@ -54,7 +54,7 @@ class VehicleDTO extends AbstractDTO
     /**
      * @Assert\NotBlank
      *
-     * @Assert\Length(max=7)
+     * @Assert\Length(max=8)
      *
      * @Ensure\ValidPlate
      */
@@ -88,7 +88,7 @@ class VehicleDTO extends AbstractDTO
         string $type,
         string $brand,
         string $model,
-        int $manufacturedYear,
+        string $manufacturedYear,
         int $mileage,
         string $licensePlate
     ) {
@@ -174,12 +174,12 @@ class VehicleDTO extends AbstractDTO
         return $this;
     }
 
-    public function getManufacturedYear(): int
+    public function getManufacturedYear(): string
     {
         return $this->manufacturedYear;
     }
 
-    public function setManufacturedYear(int $manufacturedYear): self
+    public function setManufacturedYear(string $manufacturedYear): self
     {
         $this->manufacturedYear = $manufacturedYear;
 

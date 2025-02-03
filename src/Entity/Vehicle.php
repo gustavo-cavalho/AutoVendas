@@ -39,7 +39,7 @@ class Vehicle
     private $model;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=20)
      */
     private $manufacturedYear;
 
@@ -49,7 +49,7 @@ class Vehicle
     private $mileage;
 
     /**
-     * @ORM\Column(type="string", length=7)
+     * @ORM\Column(type="string", length=8)
      */
     private $licensePlate;
 
