@@ -12,7 +12,7 @@ interface MultipleErrosInterface
     /**
      * Method to get multiple errors from a exception.
      *
-     * @return array an array of errors
+     * @return mixed the errors
      */
-    public function getErrors(): array;
+    public function getErrors();
 }

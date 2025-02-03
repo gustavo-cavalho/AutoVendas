@@ -3,13 +3,11 @@
 namespace App\DTO;
 
 use App\Entity\User;
-use App\Exceptions\ValidationException;
 use App\Interfaces\Auth\UserDTOInterface;
 use App\Validator as Ensure;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class UserDTO implements UserDTOInterface
+class UserDTO extends AbstractDTO implements UserDTOInterface
 {
     public const TO_LOGIN = 'login';
     public const TO_REGISTER = 'registration';
@@ -41,46 +39,18 @@ class UserDTO implements UserDTOInterface
     /**
      * Convert the DTO to an entity.
      *
-     * @param array|null $options is possible to pass extra info if needed
-     *
      * @example - ['roles' => ['ROLE_USER', 'ROLE_ADMIN']]
      *
      * @see App\Interfaces\DTOInterface
      */
-    public function ToEntity(?array $options = null): User
+    public function toEntity(): User
     {
         $user = new User();
 
-        $user
+        return $user
             ->setEmail($this->email)
             ->setPassword($this->password)
             ->setName($this->name);
-
-        if (isset($options['roles'])) {
-            $roles = $options['roles'];
-
-            if (!is_array($roles)) {
-                throw new \InvalidArgumentException('Roles must be an array');
-            }
-
-            $user->setRoles($roles);
-        }
-
-        return $user;
-    }
-
-    /**
-     * Check if the data is valid.
-     *
-     * @see App\Interfaces\DTOInterface
-     */
-    public function validate(ValidatorInterface $validator, $groups): void
-    {
-        $erros = $validator->validate($this, null, $groups);
-
-        if ($erros->count() > 0) {
-            throw new ValidationException('Invalid data', (array) $erros);
-        }
     }
 
     public function getIdentifier(): string

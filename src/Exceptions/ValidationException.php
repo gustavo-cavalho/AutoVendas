@@ -10,12 +10,11 @@ use App\Interfaces\MultipleErrosInterface;
 class ValidationException extends \Exception implements MultipleErrosInterface
 {
     /**
-     * An array that contains the errors from the validation.
-     * The key is the field name and the value is the error message.
+     * A var that contains the errors from the validation.
      */
-    private array $errors;
+    private $errors;
 
-    public function __construct(?string $message = null, ?array $errors = null)
+    public function __construct(?string $message = null, $errors = null)
     {
         parent::__construct($message, 400);
         $this->errors = $errors;
@@ -28,7 +27,7 @@ class ValidationException extends \Exception implements MultipleErrosInterface
      *
      * @see App\Interfaces\MultipleErrosInterface
      */
-    public function getErrors(): array
+    public function getErrors()
     {
         return $this->errors;
     }

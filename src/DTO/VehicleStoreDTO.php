@@ -4,13 +4,12 @@ namespace App\DTO;
 
 use App\Entity\VehicleStore;
 use App\Exceptions\ValidationException;
-use App\Interfaces\DTOInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Represents a vehicle.
  */
-class VehicleStoreDTO implements DTOInterface
+class VehicleStoreDTO extends AbstractDTO
 {
     private string $credencial;
     private string $phone;
@@ -58,13 +57,11 @@ class VehicleStoreDTO implements DTOInterface
     /**
      * Convert the DTO to an entity.
      *
-     * @param array|null $options is possible add extra info if needed
-     *
      * @example - Doesn't implented yet
      *
      * @see App\Interfaces\DTOInterface
      */
-    public function ToEntity(?array $options = null): object
+    public function toEntity(): object
     {
         $store = new VehicleStore();
 

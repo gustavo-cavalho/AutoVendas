@@ -14,12 +14,9 @@ interface DTOInterface
     /**
      * Convert the object to an entity.
      *
-     * @param array|null $options an array of keys and values
-     *                            that can be used to configure the entity
-     *
      * @return object an entity that DTO represents
      */
-    public function ToEntity(?array $options = null): object;
+    public function toEntity();
 
     /**
      *  Uses the Symfony validator to validate the groups that're requested.

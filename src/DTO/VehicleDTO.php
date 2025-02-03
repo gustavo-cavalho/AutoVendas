@@ -3,15 +3,13 @@
 namespace App\DTO;
 
 use App\Entity\Vehicle;
-use App\Interfaces\DTOInterface;
 use App\Validator as Ensure;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Represents a vehicle.
  */
-class VehicleDTO implements DTOInterface
+class VehicleDTO extends AbstractDTO
 {
     /**
      * @Assert\NotNull
@@ -103,25 +101,14 @@ class VehicleDTO implements DTOInterface
         $this->licensePlate = $licensePlate;
     }
 
-    /*
-     * Check if the data is valid.
-     *
-     * @see App\Interfaces\DTOInterface
-     */
-    public function validate(ValidatorInterface $validator, array $groups): void
-    {
-    }
-
     /**
      * Convert the DTO to an entity.
-     *
-     * @param array|null $options is possible add extra info if needed
      *
      * @example - Doesn't implented yet
      *
      * @see App\Interfaces\DTOInterface
      */
-    public function ToEntity(?array $options = null): Vehicle
+    public function toEntity(): Vehicle
     {
         $vehicle = new Vehicle();
 

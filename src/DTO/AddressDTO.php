@@ -3,16 +3,13 @@
 namespace App\DTO;
 
 use App\Entity\Address;
-use App\Exceptions\ValidationException;
-use App\Interfaces\DTOInterface;
 use App\Validator\AddressMatchesCep;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @AddressMatchesCep
  */
-class AddressDTO implements DTOInterface
+class AddressDTO extends AbstractDTO
 {
     /**
      * must normalize the cep to store only
@@ -70,19 +67,7 @@ class AddressDTO implements DTOInterface
     /**
      * @see App\Interfaces\DTOInterface
      */
-    public function validate(ValidatorInterface $validator, array $groups): void
-    {
-        $erros = $validator->validate($this, null, $groups);
-
-        if ($erros->count() > 0) {
-            throw new ValidationException('Address contains invalids fields', (array) $erros);
-        }
-    }
-
-    /**
-     * @see App\Interfaces\DTOInterface
-     */
-    public function ToEntity(?array $options = null): object
+    public function toEntity(?array $options = null): object
     {
         $address = new Address();
 
