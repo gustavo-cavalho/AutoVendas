@@ -10,11 +10,11 @@ use App\Exceptions\IdentityAlreadyExistsException;
 use App\Exceptions\ValidationException;
 use App\Interfaces\CrudServiceInterface;
 use App\Interfaces\SerializerInterface;
-use App\Repository\VehicleStoreRepository;
 use App\Service\SerializerService;
 use App\Service\VehicleStoreService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,11 +35,11 @@ class VehicleStoreController extends AbstractController
 
     public function __construct(
         ValidatorInterface $validator,
-        VehicleStoreRepository $repository,
+        EntityManagerInterface $em,
         SymfonySerializerInterface $serializer
     ) {
         $this->validator = $validator;
-        $this->crudService = new VehicleStoreService($repository);
+        $this->crudService = new VehicleStoreService($em);
         $this->serializer = new SerializerService($serializer, VehicleDTO::class);
     }
 

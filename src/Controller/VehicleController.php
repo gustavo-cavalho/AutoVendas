@@ -5,10 +5,11 @@ namespace App\Controller;
 use App\DTO\VehicleDTO;
 use App\Exceptions\ValidationException;
 use App\Interfaces\CrudServiceInterface;
-use App\Repository\VehicleRepository;
+use App\Service\Api\FipeApiService;
 use App\Service\VehicleService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,13 +23,18 @@ class VehicleController extends AbstractController
     use JsonRequestUtil;
     use JsonResponseUtil;
 
-    private CrudServiceInterface $service;
+    private CrudServiceInterface $crudService;
     private ValidatorInterface $validator;
+    private FipeApiService $fipeApi;
 
-    public function __construct(VehicleRepository $repository, HttpClientInterface $httpClient, ValidatorInterface $validator)
-    {
-        $this->service = new VehicleService($repository, $httpClient);
+    public function __construct(
+        EntityManagerInterface $em,
+        HttpClientInterface $httpClient,
+        ValidatorInterface $validator
+    ) {
+        $this->crudService = new VehicleService($em);
         $this->validator = $validator;
+        $this->fipeApi = new FipeApiService($httpClient);
     }
 
     /**
@@ -42,10 +48,11 @@ class VehicleController extends AbstractController
             $vehicleDTO = $this->newVehicleDTO($id, $data);
 
             $vehicleDTO->validate($this->validator, []);
+            $this->fipeApi->validate($vehicleDTO);
 
-            $vehicle = $this->service->create($vehicleDTO);
+            $vehicle = $this->crudService->create($vehicleDTO);
 
-            //  TODO: setialize
+            //  TODO: serialize
 
             return $this->statusCreated('Vehicle registered sucefully!', $vehicle);
         } catch (BadRequestHttpException $e) {

@@ -5,18 +5,22 @@ namespace App\Service;
 use App\DTO\VehicleDTO;
 use App\Entity\Vehicle;
 use App\Exceptions\IdentityAlreadyExistsException;
-use App\Interfaces\CrudServiceInterface;
 use App\Interfaces\DTOInterface;
 use App\Repository\VehicleRepository;
+use App\Service\Crud\AbstractCrudService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class VehicleService implements CrudServiceInterface
+class VehicleService extends AbstractCrudService
 {
-    private VehicleRepository $repository;
+    protected string $className = Vehicle::class;
+    protected const NOT_FOUND_MESSAGE = 'Can\'t find the vehicle.';
+    private VehicleRepository $repo;
 
-    public function __construct(VehicleRepository $repository)
+    public function __construct(EntityManagerInterface $em)
     {
-        $this->repository = $repository;
+        parent::__construct($em);
+        $this->repo = $this->em->getRepository($this->className);
     }
 
     public function create(DTOInterface $dto)
@@ -24,53 +28,29 @@ class VehicleService implements CrudServiceInterface
         /**
          * @var VehicleDTO $dto
          */
-        $vehicle = $this->repository->findByLicensePlate($dto->getIdentifier());
+        $vehicle = $this->repo->findByLicensePlate($dto->getIdentifier());
         if (!is_null($vehicle)) {
             throw new IdentityAlreadyExistsException('A vehicle with this plate already exists.');
         }
 
         $vehicle = $dto->ToEntity();
 
-        $this->repository->add($vehicle, true);
+        $this->repo->add($vehicle, true);
 
         return $vehicle;
     }
 
     public function update(int $id, DTOInterface $dto)
     {
-        $vehicle = $this->repository->find($id);
+        $vehicle = $this->repo->find($id);
         if (is_null($vehicle)) {
             throw new NotFoundHttpException('Cant\'t find the vehicle.');
         }
 
         $vehicle = $this->setNewDataToEntity($dto, $vehicle);
+        $this->em->flush();
 
         return $vehicle;
-    }
-
-    public function delete(int $id)
-    {
-        $vehicle = $this->repository->find($id);
-        if (is_null($vehicle)) {
-            throw new NotFoundHttpException('Cant\'t find the vehicle.');
-        }
-
-        $this->repository->remove($vehicle, true);
-    }
-
-    public function find(int $id)
-    {
-        $vehicle = $this->repository->find($id);
-        if (is_null($vehicle)) {
-            throw new NotFoundHttpException('Cant\'t find the vehicle.');
-        }
-
-        return $vehicle;
-    }
-
-    public function findAll()
-    {
-        return $this->repository->findAll();
     }
 
     private function setNewDataToEntity(VehicleDTO $dto, Vehicle $existingVehicle): Vehicle
