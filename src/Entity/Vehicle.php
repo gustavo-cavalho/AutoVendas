@@ -4,12 +4,15 @@ namespace App\Entity;
 
 use App\Repository\VehicleRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=VehicleRepository::class)
  */
 class Vehicle
 {
+    public const SERIALIZE_SHOW = 'vehicle:show';
+
     public const TYPE_CAR = 'carros';
     public const TYPE_MOTORCYCLE = 'motos';
     public const TYPE_TRUCK = 'caminhoes';
@@ -20,31 +23,43 @@ class Vehicle
      * @ORM\GeneratedValue
      *
      * @ORM\Column(type="integer")
+     *
+     * @Groups({"vehicle:show"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=50)
+     *
+     * @Groups({"vehicle:show"})
      */
     private $type;
 
     /**
      * @ORM\Column(type="string", length=20)
+     *
+     * @Groups({"vehicle:show"})
      */
     private $brand;
 
     /**
      * @ORM\Column(type="string", length=50)
+     *
+     * @Groups({"vehicle:show"})
      */
     private $model;
 
     /**
      * @ORM\Column(type="string", length=20)
+     *
+     * @Groups({"vehicle:show"})
      */
     private $manufacturedYear;
 
     /**
      * @ORM\Column(type="integer")
+     *
+     * @Groups({"vehicle:show"})
      */
     private $mileage;
 

@@ -13,14 +13,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class VehicleStore
 {
-    public const SERIALIZE_SHOW = 'show_store';
-    public const SERIALIZE_INDEX = 'index_store';
+    public const SERIALIZE_SHOW = 'store:show';
+    public const SERIALIZE_INDEX = 'store:index';
 
     public const STATUS_ACTIVE = 'ACTIVE';
     public const STATUS_DISABLE = 'DISABLE';
 
     /**
-     * @Groups({"show_store", "index_store"})
+     * @Groups({"store:show", "store:index"})
      *
      * @ORM\Id
      *
@@ -33,63 +33,63 @@ class VehicleStore
     /**
      * @ORM\Column(type="string", length=20)
      *
-     * @Groups({"show_store"})
+     * @Groups({"store:show"})
      */
     private $credencial;
 
     /**
      * @ORM\OneToMany(targetEntity=Vehicle::class, mappedBy="vehicleStore")
      *
-     * @Groups({"show_store", "admin_store"})
+     * @Groups({"store:show", "admin_store"})
      */
     private $vehicleStock;
 
     /**
      * @ORM\OneToMany(targetEntity=user::class, mappedBy="vehicleStore")
      *
-     * @Groups({"show_store", "admin_store"})
+     * @Groups({"store:show", "admin_store"})
      */
     private $employers;
 
     /**
      * @ORM\OneToMany(targetEntity=Ad::class, mappedBy="advertiserStore", orphanRemoval=true)
      *
-     * @Groups({"show_store", "admin_store"})
+     * @Groups({"store:show", "admin_store"})
      */
     private $ads;
 
     /**
      * @ORM\Column(type="string", length=15)
      *
-     * @Groups({"show_store"})
+     * @Groups({"store:show"})
      */
     private $phone;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"show_store"})
+     * @Groups({"store:show"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"show_store", "index_store"})
+     * @Groups({"store:show", "store:index"})
      */
     private $name;
 
     /**
      * @ORM\OneToOne(targetEntity=Address::class, mappedBy="vehicleStore", cascade={"persist", "remove"})
      *
-     * @Groups({"show_store", "index_store"})
+     * @Groups({"store:show", "store:index"})
      */
     private $address;
 
     /**
      * @ORM\Column(type="string", length=20)
      *
-     * @Groups({"show_store"})
+     * @Groups({"store:show"})
      */
     private $status = self::STATUS_ACTIVE;
 

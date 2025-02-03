@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    public const SERIALIZE_SHOW = 'show_user';
+    public const SERIALIZE_SHOW = 'user:show';
 
     /**
      * @ORM\Id
@@ -22,21 +22,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *
      * @ORM\Column(type="integer")
      *
-     * @Groups({"show_user"})
+     * @Groups({"user:show"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180)
      *
-     * @Groups({"show_user"})
+     * @Groups({"user:show"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      *
-     * @Groups({"show_user"})
+     * @Groups({"user:show"})
      */
     private $email;
 
