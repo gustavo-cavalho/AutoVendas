@@ -47,10 +47,10 @@ class VehicleRepository extends ServiceEntityRepository
         return $this->getEntityManager()
             ->createQuery(
                 'SELECT v FROM App\Entity\Vehicle v
-                    WHERE v.license_plate = :plate'
+                    WHERE v.licensePlate = :plate'
             )
             ->setParameter('plate', $plate)
-            ->getOneOrNullResult();
+            ->getOneOrNullResult()
         ;
     }
 
