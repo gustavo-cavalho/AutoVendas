@@ -50,7 +50,7 @@ class LoginController extends AbstractController
                 $data['password']
             );
 
-            $userDTO->validate($this->validator, UserDTO::TO_LOGIN);
+            $userDTO->validate($this->validator, [UserDTO::TO_LOGIN]);
 
             $token = $this->loginService->autenticate($userDTO);
 

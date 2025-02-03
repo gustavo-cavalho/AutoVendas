@@ -47,7 +47,7 @@ trait JsonResponseUtil
      *
      * @return JsonResponse Json ready for return
      */
-    private function failureResponse(string $message, array $errors = [], int $status = Response::HTTP_BAD_REQUEST): JsonResponse
+    private function failureResponse(string $message, $errors = '', int $status = Response::HTTP_BAD_REQUEST): JsonResponse
     {
         $jsonResponse = [
             'message' => $message,
@@ -104,7 +104,7 @@ trait JsonResponseUtil
      *
      * @see failureResponse
      */
-    public function errBadRequest(string $message, array $errors = []): JsonResponse
+    public function errBadRequest(string $message, $errors = ''): JsonResponse
     {
         return $this->failureResponse($message, $errors, Response::HTTP_BAD_REQUEST);
     }

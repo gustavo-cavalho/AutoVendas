@@ -56,7 +56,7 @@ class RegistrationController extends AbstractController
                 $data['name']
             );
 
-            $userDTO->validate($this->validator, UserDTO::TO_REGISTER);
+            $userDTO->validate($this->validator, [UserDTO::TO_REGISTER]);
 
             $user = $this->registrationsService->register($userDTO);
 
