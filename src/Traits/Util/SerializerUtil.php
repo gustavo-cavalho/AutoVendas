@@ -24,12 +24,12 @@ trait SerializerUtil
      * and then decodes the JSON into an associative array. You can specify serialization groups
      * to customize the attributes included in the serialization.
      *
-     * @param object $object the object to be serialized
-     * @param array  $groups (optional) An array of serialization groups to customize the output
+     * @param object       $object the object to be serialized
+     * @param string|array $groups (optional) An array of serialization groups to customize the output
      *
      * @return array the serialized object as an associative array
      */
-    public function serialize($object, array $groups = []): array
+    public function serialize($object, $groups = []): array
     {
         if (!$this->serializer instanceof SerializerInterface) {
             throw new \LogicException('Serializer is not injected or is not an instance of SerializerInterface.');
