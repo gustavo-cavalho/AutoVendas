@@ -4,6 +4,8 @@ namespace App\DTO;
 
 use App\Entity\VehicleStore;
 use App\Exceptions\ValidationException;
+use App\Validator as Ensure;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -11,10 +13,26 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class VehicleStoreDTO extends AbstractDTO
 {
+    /**
+     * @Ensure\ValidCredencial
+     */
     private string $credencial;
+
+    /**
+     * @Ensure\ValidPhone
+     */
     private string $phone;
+
+    /**
+     * @Assert\Email
+     */
     private string $email;
+
+    /**
+     * @Ensure\ValidName
+     */
     private string $name;
+
     private AddressDTO $address;
 
     public function __construct(
@@ -33,7 +51,8 @@ class VehicleStoreDTO extends AbstractDTO
 
     /**
      * Check if the data is valid.
-     * Is possivle to check pass to groups for check
+     * !!! NOT IMPLEMENTED YET !!!
+     * Is possible to check pass to groups for check
      * ```php
      *   $groups = ['vehicleStore' => ['ALL'], 'address' => ['CEP_ONLY']];
      * ```.
@@ -75,6 +94,6 @@ class VehicleStoreDTO extends AbstractDTO
 
     public function getIdentifier(): string
     {
-        return 'credencial';
+        return $this->credencial;
     }
 }
