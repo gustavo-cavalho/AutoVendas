@@ -152,7 +152,7 @@ class VehicleController extends AbstractController
     }
 
     /**
-     * @Route("/ad/{id}", name="delete_ad", methods={"DELETE"})
+     * @Route("/store/{storeId}/vehicle/{id}", name="delete_vehicle", methods={"DELETE"})
      */
     public function delete(int $id): JsonResponse
     {

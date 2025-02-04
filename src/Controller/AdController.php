@@ -18,12 +18,12 @@ use App\Traits\Util\JsonResponseUtil;
 use App\Traits\Util\SerializerUtil;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -126,6 +126,7 @@ class AdController extends AbstractController
             $fipeData = $this->fipeApi->getInfoFromFipe($ad->getVehicleAdvertised());
             $ad = $this->serialize($ad, [Ad::SERIALIZE_SHOW]);
 
+            // TODO; improve data visualization
             return $this->statusOk('Founded the ad', [
                 'fipeData' => $fipeData,
                 'ad' => $ad,
@@ -146,6 +147,24 @@ class AdController extends AbstractController
         $ads = $this->serialize($ads, [Ad::SERIALIZE_INDEX]);
 
         return $this->statusOk('There is all ads.', $ads);
+    }
+
+    /**
+     * @Route("/ad/{id}", name="delete_ad", methods={"DELETE"})
+     */
+    public function delete(int $id): JsonResponse
+    {
+        try {
+            /** @var Ad $ad */
+            $ad = $this->crudService->find($id);
+            $this->denyAccessUnlessGranted(StoreVoter::ACCESS, $ad->getAdvertiserStore());
+
+            $this->crudService->delete($id);
+        } catch (AccessDeniedException $e) {
+            return $this->errForbidden($e->getMessage());
+        } catch (NotFoundHttpException $e) {
+            return $this->errNotFound($e->getMessage());
+        }
     }
 
     private function newAdDTO(array $data, int $storeId, int $vehicleId): AdDTO
