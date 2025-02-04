@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\DTO\VehicleDTO;
 use App\Entity\Vehicle;
+use App\Entity\VehicleStore;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Exceptions\ValidationException;
 use App\Interfaces\CrudServiceInterface;
@@ -17,12 +18,12 @@ use App\Traits\Util\JsonResponseUtil;
 use App\Traits\Util\SerializerUtil;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -58,6 +59,7 @@ class VehicleController extends AbstractController
     public function register(Request $request, int $id): JsonResponse
     {
         try {
+            /** @var VehicleStore $store */
             $store = $this->storeFinder->find($id);
             $this->denyAccessUnlessGranted(StoreVoter::ACCESS, $store);
 
@@ -134,6 +136,36 @@ class VehicleController extends AbstractController
             return $this->errNotFound($e->getMessage());
         } catch (AccessDeniedException $e) {
             return $this->errForbidden($e->getMessage());
+        }
+    }
+
+    /**
+     * @Route("store/{storeId}/vehicle", name="index_vehicle", methods={"GET"})
+     */
+    public function index(): JsonResponse
+    {
+        $vehicles = $this->crudService->findAll();
+
+        $vehicles = $this->serialize($vehicles, [Vehicle::SERIALIZE_SHOW]);
+
+        return $this->statusOk('Founded vehicles', $vehicles);
+    }
+
+    /**
+     * @Route("/ad/{id}", name="delete_ad", methods={"DELETE"})
+     */
+    public function delete(int $id): JsonResponse
+    {
+        try {
+            /** @var Vehicle $vehicle */
+            $vehicle = $this->crudService->find($id);
+            $this->denyAccessUnlessGranted(StoreVoter::ACCESS, $vehicle->getVehicleStore());
+
+            $this->crudService->delete($id);
+        } catch (AccessDeniedException $e) {
+            return $this->errForbidden($e->getMessage());
+        } catch (NotFoundHttpException $e) {
+            return $this->errNotFound($e->getMessage());
         }
     }
 
