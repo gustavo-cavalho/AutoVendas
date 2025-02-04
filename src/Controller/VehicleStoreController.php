@@ -16,12 +16,12 @@ use App\Traits\Util\JsonResponseUtil;
 use App\Traits\Util\SerializerUtil;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -143,6 +143,24 @@ class VehicleStoreController extends AbstractController
             return $this->errNotFound($e->getMessage());
         } catch (\Exception $e) {
             return $this->errInteralServer('Sorry, but some error just ocurred. :(');
+        }
+    }
+
+    /**
+     * @Route("/ad/{id}", name="delete_ad", methods={"DELETE"})
+     */
+    public function delete(int $id): JsonResponse
+    {
+        try {
+            /** @var VehicleStore $store */
+            $store = $this->crudService->find($id);
+            $this->denyAccessUnlessGranted(StoreVoter::ACCESS, $store);
+
+            $this->crudService->delete($id);
+        } catch (AccessDeniedException $e) {
+            return $this->errForbidden($e->getMessage());
+        } catch (NotFoundHttpException $e) {
+            return $this->errNotFound($e->getMessage());
         }
     }
 
