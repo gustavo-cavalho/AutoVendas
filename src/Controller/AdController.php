@@ -5,14 +5,17 @@ namespace App\Controller;
 use App\DTO\AdDTO;
 use App\Entity\Ad;
 use App\Entity\Vehicle;
+use App\Exceptions\IdentityAlreadyExistsException;
 use App\Exceptions\ValidationException;
 use App\Interfaces\CrudServiceInterface;
+use App\Security\Voter\AdVoter;
 use App\Service\Crud\AdService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
 use App\Traits\Util\SerializerUtil;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -47,6 +50,8 @@ class AdController extends AbstractController
     public function advertise(Request $request, int $storeId, int $vehicleId): JsonResponse
     {
         try {
+            // TODO: check if the user works on the store
+
             $data = $this->getJsonBodyFields($request, ['description', 'price', 'status']);
             $adDTO = $this->newAdDTO($data, $storeId, $vehicleId);
 
@@ -61,6 +66,8 @@ class AdController extends AbstractController
             return $this->errBadRequest($e->getMessage());
         } catch (ValidationException $e) {
             return $this->errBadRequest($e->getMessage(), $e->getErrors());
+        } catch (IdentityAlreadyExistsException $e) {
+            return $this->errConflict($e->getMessage());
         }
     }
 
@@ -70,7 +77,8 @@ class AdController extends AbstractController
     public function update(Request $request, int $id): JsonResponse
     {
         try {
-            // TODO: check permission
+            $ad = $this->crudService->find($id);
+            $this->denyAccessUnlessGranted(AdVoter::EDIT, $ad);
 
             $data = $this->getJsonBodyFields($request, ['description', 'price', 'status']);
             $adDTO = $this->newAdDTO($data, 0, 0);
@@ -88,6 +96,8 @@ class AdController extends AbstractController
             return $this->errBadRequest($e->getMessage(), $e->getErrors());
         } catch (NotFoundHttpException $e) {
             return $this->errNotFound($e->getMessage());
+        } catch (AccessDeniedException $e) {
+            return $this->errForbidden($e->getMessage());
         }
     }
 
@@ -98,11 +108,15 @@ class AdController extends AbstractController
     {
         try {
             $ad = $this->crudService->find($id);
+            $this->denyAccessUnlessGranted(AdVoter::VIEW, $ad);
+
             $ad = $this->serialize($ad, [Ad::SERIALIZE_SHOW]);
 
             return $this->statusOk('Founded the ad', $ad);
         } catch (NotFoundHttpException $e) {
             return $this->errNotFound($e->getMessage());
+        } catch (AccessDeniedException $e) {
+            return $this->errForbidden($e->getMessage());
         }
     }
 

@@ -4,16 +4,19 @@ namespace App\Controller;
 
 use App\DTO\AddressDTO;
 use App\DTO\VehicleStoreDTO;
+use App\Entity\User;
 use App\Entity\VehicleStore;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Exceptions\ValidationException;
 use App\Interfaces\CrudServiceInterface;
+use App\Security\Voter\StoreVoter;
 use App\Service\Crud\VehicleStoreService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
 use App\Traits\Util\SerializerUtil;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -48,7 +51,7 @@ class VehicleStoreController extends AbstractController
     public function register(Request $request)
     {
         try {
-            // TODO: Check permission
+            $this->denyAccessUnlessGranted(User::ROLE_ADMIN);
 
             $vehicleStoreData = $this->getJsonBodyFields($request, ['credencial', 'phone', 'email', 'name']);
             $addressData = $this->getJsonBodyFields($request, ['cep', 'street', 'number', 'neighborhood', 'city', 'state', 'complement']);
@@ -69,6 +72,8 @@ class VehicleStoreController extends AbstractController
             return $this->errBadRequest($e->getMessage(), $e->getErrors());
         } catch (IdentityAlreadyExistsException $e) {
             return $this->errConflict($e->getMessage());
+        } catch (AccessDeniedException $e) {
+            return $this->errForbidden($e->getMessage());
         } catch (\Exception $e) {
             return $this->errInteralServer('Sorry, but some error just ocurred. :(');
         }
@@ -80,6 +85,10 @@ class VehicleStoreController extends AbstractController
     public function update(Request $request, int $id): JsonResponse
     {
         try {
+            /** @var VehicleStore $store */
+            $store = $this->crudService->find($id);
+            $this->denyAccessUnlessGranted(StoreVoter::EDIT, $store);
+
             $vehicleStoreData = $this->getJsonBodyFields($request, ['credencial', 'phone', 'email', 'name']);
             $addressData = $this->getJsonBodyFields($request, ['cep', 'street', 'number', 'neighborhood', 'city', 'state', 'complement']);
 
@@ -88,7 +97,7 @@ class VehicleStoreController extends AbstractController
 
             $vehicleStoreDTO->validate($this->validator, []);
 
-            $vehicleStore = $this->crudService->update($id, $vehicleStoreDTO);
+            $vehicleStore = $this->crudService->update($store, $vehicleStoreDTO);
 
             $vehicleStore = $this->serialize($vehicleStore, [VehicleStore::SERIALIZE_SHOW]);
 
