@@ -23,14 +23,12 @@ interface CrudServiceInterface
     /**
      * Update a entity with the passe ID with the content of the DTO.
      *
-     * @param int          $id  for the Entity that will be uptaded
-     * @param DTOInterface $dto the content that will be used to update
+     * @param T            $existingEntity the Entity that will be uptaded
+     * @param DTOInterface $dto            the content that will be used to update
      *
      * @return T with the new data
-     *
-     * @throws NotFoundHtppException if can't find the Entity that will be updated
      */
-    public function update(int $id, DTOInterface $dto);
+    public function update($existingEntity, DTOInterface $dto);
 
     /**
      * Delete a Entity that contains the passed ID.

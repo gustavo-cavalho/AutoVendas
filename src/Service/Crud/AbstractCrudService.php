@@ -49,12 +49,12 @@ abstract class AbstractCrudService implements CrudServiceInterface
     /**
      * Updates an existing object based on the ID and DTO data.
      *
-     * @param int          $id  object identifier
-     * @param DTOInterface $dto updated data transfer object
+     * @param T            $existingEntity the entity that musb be updated
+     * @param DTOInterface $dto            updated data transfer object
      *
      * @return T the updated object
      */
-    abstract public function update(int $id, DTOInterface $dto);
+    abstract public function update($existingEntity, DTOInterface $dto);
 
     /**
      * Removes an object based on the ID.
