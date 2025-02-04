@@ -5,13 +5,14 @@ namespace App\Controller;
 use App\DTO\AdDTO;
 use App\Entity\Ad;
 use App\Entity\Vehicle;
-use App\Entity\VehicleStore;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Exceptions\ValidationException;
 use App\Interfaces\CrudServiceInterface;
 use App\Security\Voter\AdVoter;
 use App\Security\Voter\StoreVoter;
+use App\Service\Api\FipeApiService;
 use App\Service\Crud\AdService;
+use App\Service\Crud\VehicleStoreService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
 use App\Traits\Util\SerializerUtil;
@@ -25,6 +26,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AdController extends AbstractController
 {
@@ -34,16 +36,19 @@ class AdController extends AbstractController
 
     private CrudServiceInterface $crudService;
     private CrudServiceInterface $storeFinder;
+    private FipeApiService $fipeApi;
     private ValidatorInterface $validator;
     private SerializerInterface $serializer;
 
     public function __construct(
         ValidatorInterface $validator,
         EntityManagerInterface $em,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        HttpClientInterface $httpClient
     ) {
         $this->crudService = new AdService($em);
-        $this->storeFinder = new VehicleStore($em);
+        $this->storeFinder = new VehicleStoreService($em);
+        $this->fipeApi = new FipeApiService($httpClient);
         $this->validator = $validator;
         $this->serializer = $serializer;
     }
@@ -64,7 +69,7 @@ class AdController extends AbstractController
 
             $ad = $this->crudService->create($adDTO);
 
-            $this->serialize($ad, Ad::SERIALIZE_SHOW);
+            $this->serialize($ad, [Ad::SERIALIZE_SHOW]);
 
             return $this->statusCreated('Ad created!', $ad);
         } catch (BadRequestHttpException $e) {
@@ -114,12 +119,17 @@ class AdController extends AbstractController
     public function show(int $id): JsonResponse
     {
         try {
+            /** @var Ad $ad */
             $ad = $this->crudService->find($id);
             $this->denyAccessUnlessGranted(AdVoter::VIEW, $ad);
 
+            $fipeData = $this->fipeApi->getInfoFromFipe($ad->getVehicleAdvertised());
             $ad = $this->serialize($ad, [Ad::SERIALIZE_SHOW]);
 
-            return $this->statusOk('Founded the ad', $ad);
+            return $this->statusOk('Founded the ad', [
+                'fipeData' => $fipeData,
+                'ad' => $ad,
+            ]);
         } catch (NotFoundHttpException $e) {
             return $this->errNotFound($e->getMessage());
         } catch (AccessDeniedException $e) {
