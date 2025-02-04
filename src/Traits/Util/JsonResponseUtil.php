@@ -108,6 +108,11 @@ trait JsonResponseUtil
         return $this->failureResponse($message, [], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
+    public function errForbidden(string $message): JsonResponse
+    {
+        return $this->failureResponse($message, [], Response::HTTP_FORBIDDEN);
+    }
+
     /**
      * Response with status 400.
      *
