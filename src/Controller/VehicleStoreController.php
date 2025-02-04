@@ -133,9 +133,8 @@ class VehicleStoreController extends AbstractController
     public function show(int $id): JsonResponse
     {
         try {
-            // TODO: check if user works of the store
-
             $vehicleStore = $this->crudService->find($id);
+            $this->denyAccessUnlessGranted(StoreVoter::VIEW, $vehicleStore);
 
             $vehicleStore = $this->serialize($vehicleStore, [VehicleStore::SERIALIZE_SHOW]);
 
