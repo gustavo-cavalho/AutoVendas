@@ -15,6 +15,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const SERIALIZE_SHOW = 'user:show';
 
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
+    public const ROLE_DEFAULT = 'ROLE_USER';
+
     /**
      * @ORM\Id
      *
@@ -99,7 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = self::ROLE_DEFAULT;
 
         return array_unique($roles);
     }

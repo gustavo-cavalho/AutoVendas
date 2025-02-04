@@ -15,6 +15,9 @@ class Ad
     public const SERIALIZE_SHOW = 'ad:show';
     public const SERIALIZE_INDEX = 'ad:index';
 
+    public const STATUS_ON_SALE = 'ON_SALE';
+    public const STATUS_SOLD = 'SOLD';
+
     /**
      * @ORM\Id
      *
