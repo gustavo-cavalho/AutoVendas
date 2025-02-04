@@ -4,6 +4,8 @@ namespace App\Service\Crud;
 
 use App\DTO\AdDTO;
 use App\Entity\Ad;
+use App\Entity\Vehicle;
+use App\Entity\VehicleStore;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Interfaces\DTOInterface;
 use App\Repository\AdRepository;
@@ -24,12 +26,31 @@ class AdService extends AbstractCrudService
 
     public function create(DTOInterface $dto)
     {
-        $ad = $this->repo->findByVehicle($dto->getIdentifier());
-        if (!is_null($ad)) {
-            throw new IdentityAlreadyExistsException('This vehicle already has an advertisement.');
+        /** @var AdDTO $dto */
+        /** @var Vehicle $vehicle */
+        $vehicle = $this->em->getRepository(Vehicle::class)->find($dto->getVehicleId());
+        if (is_null($vehicle)) {
+            throw new NotFoundHttpException('This vehicle doesn\'t exists.');
         }
 
+        $ad = $vehicle->getAd();
+        if (!is_null($ad)) {
+            throw new IdentityAlreadyExistsException('This vehicle already has a announcement.');
+        }
+
+        /** @var VehicleStore $store */
+        $store = $this->em->getRepository(VehicleStore::class)->find($dto->getVehicleStoreId());
+        if (is_null($store)) {
+            throw new NotFoundHttpException('Can\'t find the Store.');
+        }
+
+        /** @var Ad $ad */
         $ad = $dto->toEntity();
+        $ad->setCreatedAt(new \DateTimeImmutable());
+        $ad->setUpdatedAt($ad->getCreatedAt());
+
+        $store->addAd($ad);
+        $vehicle->setAd($ad);
 
         $this->repo->add($ad, true);
 
