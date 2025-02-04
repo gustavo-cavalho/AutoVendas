@@ -16,7 +16,7 @@ class AdVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return in_array($attribute, [self::EDIT, self::VIEW])
+        return in_array($attribute, [self::EDIT, self::VIEW, self::CREATE])
             && $subject instanceof Ad;
     }
 
