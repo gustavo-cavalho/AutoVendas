@@ -1,8 +1,8 @@
-# AutoVendas
+# AutoVendas 1.0
 
 Plataforma de vendas de carros online através de anúncios de revendedoras. Permite que usuários busquem veículos, comparem preços e realizem negociações diretamente com as concessionárias cadastradas.
 
-_**[Documentação Completa](https://docs.google.com/document/d/1UAPpEU-ygud93wjtDnIpoNadS8VgZBNRoQ8BsskMQak/edit?usp=sharing)**_
+_**[Documentação Completa](https://docs.google.com/document/d/1Et5qpdvoW-axkDRrRnYireStbGSFyK1ab5VhhFKAY2E/edit?usp=sharing)**_
 
 ## Tecnologias Utilizadas
 
@@ -67,21 +67,85 @@ AutoVendas/
 
 ## Rotas Importantes
 
-| Rota            | Método | Descrição                  |
-| --------------- | ------ | -------------------------- |
-| `/api/login`    | POST   | Autenticação de usuários   |
-| `/api/register` | POST   | Cadastro de novos usuários |
+### Autenticação
+
+- **Login**
+
+  - `POST /api/login`
+  - Endpoint para autenticação de usuários.
+
+- **Registro de Usuário**
+  - `POST /api/register`
+  - Criação de uma nova conta de usuário.
+
+### Anúncios
+
+- **Criar Anúncio para um Veículo**
+
+  - `POST /api/store/{storeId}/vehicle/{vehicleId}/ad`
+  - Associa um anúncio a um veículo específico dentro de uma loja.
+
+- **Atualizar Anúncio**
+
+  - `PUT /api/ad/{id}`
+  - Atualiza as informações de um anúncio existente.
+
+- **Detalhes do Anúncio**
+
+  - `GET /api/ad/{id}`
+  - Obtém informações de um anúncio específico.
+
+- **Listar Anúncios**
+  - `GET /api/ad`
+  - Retorna uma lista de anúncios disponíveis.
+
+### Veículos
+
+- **Registrar Veículo**
+
+  - `POST /api/store/{id}/vehicle`
+  - Adiciona um novo veículo a uma loja específica.
+
+- **Atualizar Veículo**
+
+  - `PUT /api/store/{storeId}/vehicle/{id}`
+  - Atualiza as informações de um veículo específico dentro de uma loja.
+
+- **Detalhes do Veículo**
+  - `GET /api/store/{storeId}/vehicle/{id}`
+  - Obtém informações detalhadas de um veículo específico.
+
+### Lojas
+
+- **Registrar Loja**
+
+  - `POST /api/store`
+  - Criação de uma nova loja.
+
+- **Atualizar Loja**
+
+  - `PUT /api/store/{id}`
+  - Atualiza as informações de uma loja existente.
+
+- **Listar Lojas**
+
+  - `GET /api/store`
+  - Retorna uma lista de lojas registradas.
+
+- **Detalhes da Loja**
+  - `GET /api/store/{id}`
+  - Obtém informações detalhadas de uma loja específica.
 
 ## Roadmap
 
 ### Gestão de Usuários
 
 - [x] Autenticação de usuários
-- [ ] Permissões de usuários
+- [x] Permissões de usuários
 
 ### Gestão de Veículos
 
-- [ ] CRUD Veículo
+- [x] CRUD Veículo
 
 ### Gestão de Lojas
 
