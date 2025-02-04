@@ -57,14 +57,9 @@ class AdService extends AbstractCrudService
         return $ad;
     }
 
-    public function update(int $id, DTOInterface $dto)
+    public function update($existingEntity, DTOInterface $dto)
     {
-        $ad = $this->repo->find($id);
-        if (is_null($ad)) {
-            throw new NotFoundHttpException('Can\'t find the Ad.');
-        }
-
-        $ad = $this->setNewDataToEntity($dto, $ad);
+        $ad = $this->setNewDataToEntity($dto, $existingEntity);
         $this->em->flush();
 
         return $ad;

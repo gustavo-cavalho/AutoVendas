@@ -8,7 +8,6 @@ use App\Exceptions\IdentityAlreadyExistsException;
 use App\Interfaces\DTOInterface;
 use App\Repository\VehicleStoreRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class VehicleStoreService extends AbstractCrudService
 {
@@ -36,14 +35,9 @@ class VehicleStoreService extends AbstractCrudService
         return $vehicleStore;
     }
 
-    public function update(int $id, DTOInterface $dto): VehicleStore
+    public function update($existingEntity, DTOInterface $dto): VehicleStore
     {
-        $vehicleStore = $this->repo->find($id);
-        if (is_null($vehicleStore)) {
-            throw new NotFoundHttpException('Can\'t found this store.');
-        }
-
-        $vehicleStore = $this->setNewDataToEntity($dto, $vehicleStore);
+        $vehicleStore = $this->setNewDataToEntity($dto, $existingEntity);
         $this->em->flush();
 
         return $vehicleStore;

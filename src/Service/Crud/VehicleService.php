@@ -47,14 +47,9 @@ class VehicleService extends AbstractCrudService
         return $vehicle;
     }
 
-    public function update(int $id, DTOInterface $dto)
+    public function update($existingEntity, DTOInterface $dto)
     {
-        $vehicle = $this->repo->find($id);
-        if (is_null($vehicle)) {
-            throw new NotFoundHttpException('Cant\'t find the vehicle.');
-        }
-
-        $vehicle = $this->setNewDataToEntity($dto, $vehicle);
+        $vehicle = $this->setNewDataToEntity($dto, $existingEntity);
         $this->em->flush();
 
         return $vehicle;
