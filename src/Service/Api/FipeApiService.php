@@ -74,28 +74,26 @@ class FipeApiService extends ApiClientService
      * This method ensures that the vehicle's brand, model, and year integration values are set
      * before making the request. If any of these values are missing, a `ValidationException` is thrown.
      *
-     * @param VehicleDTO $dto the DTO (Data Transfer Object) containing the vehicle data
-     *
      * @return array the data retrieved from the Fipe API
      *
      * @throws \InvalidArgumentException if any of the required integration values are missing
      */
-    public function getInfoFromFipe(VehicleDTO $dto): array
+    public function getInfoFromFipe(Vehicle $Vehicle): array
     {
-        if (empty($dto->getBrandIntegration())) {
+        if (empty($Vehicle->getBrandIntegration())) {
             throw new \InvalidArgumentException('Brand integration is missing.');
         }
 
-        if (empty($dto->getModelIntegration())) {
+        if (empty($Vehicle->getModelIntegration())) {
             throw new \InvalidArgumentException('Model integration is missing.');
         }
 
-        if (empty($dto->getYearIntegration())) {
+        if (empty($Vehicle->getYearIntegration())) {
             throw new \InvalidArgumentException('Year integration is missing.');
         }
 
         return $this->get(
-            "/{$dto->getType()}/marcas/{$dto->getBrandIntegration()}/modelos/{$dto->getModelIntegration()}/anos/{$dto->getYearIntegration()}"
+            "{$Vehicle->getType()}/marcas/{$Vehicle->getBrandIntegration()}/modelos/{$Vehicle->getModelIntegration()}/anos/{$Vehicle->getYearIntegration()}"
         );
     }
 
