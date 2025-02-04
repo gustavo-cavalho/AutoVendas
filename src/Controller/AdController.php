@@ -5,10 +5,12 @@ namespace App\Controller;
 use App\DTO\AdDTO;
 use App\Entity\Ad;
 use App\Entity\Vehicle;
+use App\Entity\VehicleStore;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Exceptions\ValidationException;
 use App\Interfaces\CrudServiceInterface;
 use App\Security\Voter\AdVoter;
+use App\Security\Voter\StoreVoter;
 use App\Service\Crud\AdService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
@@ -30,8 +32,9 @@ class AdController extends AbstractController
     use JsonResponseUtil;
     use SerializerUtil;
 
-    private ValidatorInterface $validator;
     private CrudServiceInterface $crudService;
+    private CrudServiceInterface $storeFinder;
+    private ValidatorInterface $validator;
     private SerializerInterface $serializer;
 
     public function __construct(
@@ -39,8 +42,9 @@ class AdController extends AbstractController
         EntityManagerInterface $em,
         SerializerInterface $serializer
     ) {
-        $this->validator = $validator;
         $this->crudService = new AdService($em);
+        $this->storeFinder = new VehicleStore($em);
+        $this->validator = $validator;
         $this->serializer = $serializer;
     }
 
@@ -50,7 +54,8 @@ class AdController extends AbstractController
     public function advertise(Request $request, int $storeId, int $vehicleId): JsonResponse
     {
         try {
-            // TODO: check if the user works on the store
+            $store = $this->storeFinder->find($storeId);
+            $this->denyAccessUnlessGranted(StoreVoter::ACCESS, $store);
 
             $data = $this->getJsonBodyFields($request, ['description', 'price', 'status']);
             $adDTO = $this->newAdDTO($data, $storeId, $vehicleId);
@@ -68,6 +73,8 @@ class AdController extends AbstractController
             return $this->errBadRequest($e->getMessage(), $e->getErrors());
         } catch (IdentityAlreadyExistsException $e) {
             return $this->errConflict($e->getMessage());
+        } catch (AccessDeniedException $e) {
+            return $this->errForbidden($e->getMessage());
         }
     }
 

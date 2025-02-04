@@ -7,9 +7,11 @@ use App\Entity\Vehicle;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Exceptions\ValidationException;
 use App\Interfaces\CrudServiceInterface;
+use App\Security\Voter\StoreVoter;
 use App\Security\Voter\VehicleVoter;
 use App\Service\Api\FipeApiService;
 use App\Service\Crud\VehicleService;
+use App\Service\Crud\VehicleStoreService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
 use App\Traits\Util\SerializerUtil;
@@ -32,8 +34,9 @@ class VehicleController extends AbstractController
     use SerializerUtil;
 
     private CrudServiceInterface $crudService;
-    private ValidatorInterface $validator;
+    private CrudServiceInterface $storeFinder;
     private FipeApiService $fipeApi;
+    private ValidatorInterface $validator;
     private SerializerInterface $serializer;
 
     public function __construct(
@@ -43,8 +46,9 @@ class VehicleController extends AbstractController
         SerializerInterface $serializer
     ) {
         $this->crudService = new VehicleService($em);
-        $this->validator = $validator;
+        $this->storeFinder = new VehicleStoreService($em);
         $this->fipeApi = new FipeApiService($httpClient);
+        $this->validator = $validator;
         $this->serializer = $serializer;
     }
 
@@ -54,7 +58,8 @@ class VehicleController extends AbstractController
     public function register(Request $request, int $id): JsonResponse
     {
         try {
-            // TODO: check if the users is a employer of the store
+            $store = $this->storeFinder->find($id);
+            $this->denyAccessUnlessGranted(StoreVoter::ACCESS, $store);
 
             $data = $this->getJsonBodyFields($request, ['type', 'brand', 'model', 'year', 'mileage', 'plate']);
 
@@ -74,6 +79,8 @@ class VehicleController extends AbstractController
             return $this->errBadRequest($e->getMessage(), $e->getErrors());
         } catch (IdentityAlreadyExistsException $e) {
             return $this->errConflict($e->getMessage());
+        } catch (AccessDeniedException $e) {
+            return $this->errForbidden($e->getMessage());
         }
     }
 
@@ -104,6 +111,8 @@ class VehicleController extends AbstractController
             return $this->errBadRequest($e->getMessage(), $e->getErrors());
         } catch (NotFoundHttpException $e) {
             return $this->errNotFound($e->getMessage());
+        } catch (AccessDeniedException $e) {
+            return $this->errForbidden($e->getMessage());
         }
     }
 

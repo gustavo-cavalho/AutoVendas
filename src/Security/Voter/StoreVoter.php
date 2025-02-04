@@ -11,6 +11,7 @@ class StoreVoter extends Voter
 {
     public const EDIT = 'STORE:EDIT';
     public const VIEW = 'STORE:VIEW';
+    public const ACCESS = 'STORE:ACCESS';
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -33,6 +34,7 @@ class StoreVoter extends Voter
         switch ($attribute) {
             case self::EDIT:
             case self::VIEW:
+            case self::ACCESS:
                 return $userIsEmployer;
         }
 

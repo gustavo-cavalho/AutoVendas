@@ -108,6 +108,8 @@ class VehicleStoreController extends AbstractController
             return $this->errBadRequest($e->getMessage(), $e->getErrors());
         } catch (NotFoundHttpException $e) {
             return $this->errNotFound($e->getMessage());
+        } catch (AccessDeniedException $e) {
+            return $this->errForbidden($e->getMessage());
         } catch (\Exception $e) {
             return $this->errInteralServer('Sorry, but some error just ocurred. :(');
         }
@@ -131,6 +133,8 @@ class VehicleStoreController extends AbstractController
     public function show(int $id): JsonResponse
     {
         try {
+            // TODO: check if user works of the store
+
             $vehicleStore = $this->crudService->find($id);
 
             $vehicleStore = $this->serialize($vehicleStore, [VehicleStore::SERIALIZE_SHOW]);
