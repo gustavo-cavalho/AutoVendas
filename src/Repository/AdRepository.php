@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Ad;
+use App\Entity\Vehicle;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -39,20 +40,18 @@ class AdRepository extends ServiceEntityRepository
         }
     }
 
-    //    /**
-    //     * @return Ad[] Returns an array of Ad objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('a.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * @return Ad|null Returns an Ad objects
+     */
+    public function findByVehicle(Vehicle $vehicle): ?Ad
+    {
+        return $this->getEntityManager()->createQuery(
+            'SELECT ad FROM App\Entity\Ad ad
+                WHERE ad.vehicle_advertised = :vehicle'
+        )
+        ->setParameter('vehicle', $vehicle)
+        ->getOneOrNullResult();
+    }
 
     //    public function findOneBySomeField($value): ?Ad
     //    {

@@ -8,7 +8,6 @@ use App\Entity\VehicleStore;
 use App\Exceptions\IdentityAlreadyExistsException;
 use App\Exceptions\ValidationException;
 use App\Interfaces\CrudServiceInterface;
-use App\Interfaces\SerializerInterface;
 use App\Service\Crud\VehicleStoreService;
 use App\Traits\Util\JsonRequestUtil;
 use App\Traits\Util\JsonResponseUtil;
@@ -20,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class VehicleStoreController extends AbstractController
