@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * VehicleStore show_store, index_store.
+ * VehicleStore store:show, store:index.
  *
  * @ORM\Entity(repositoryClass=AddressRepository::class)
  */
@@ -33,35 +33,35 @@ class Address
     /**
      * @ORM\Column(type="integer")
      *
-     * @Groups({"store:show","store:index"})
+     * @Groups({"store:show","store:index", "ad:show"})
      */
     private $cep;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"store:show"})
+     * @Groups({"store:show", "ad:show"})
      */
     private $street;
 
     /**
      * @ORM\Column(type="integer")
      *
-     * @Groups({"store:show"})
+     * @Groups({"store:show", "ad:show"})
      */
     private $number;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"store:show"})
+     * @Groups({"store:show", "ad:show"})
      */
     private $neighborhood;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"store:show", "store:index"})
+     * @Groups({"store:show", "store:index", "ad:show"})
      */
     private $city;
 

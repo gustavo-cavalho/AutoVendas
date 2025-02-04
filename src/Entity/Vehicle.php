@@ -24,7 +24,7 @@ class Vehicle
      *
      * @ORM\Column(type="integer")
      *
-     * @Groups({"vehicle:show"})
+     * @Groups({"vehicle:show", "ad:show"})
      */
     private $id;
 
@@ -38,28 +38,28 @@ class Vehicle
     /**
      * @ORM\Column(type="string", length=20)
      *
-     * @Groups({"vehicle:show"})
+     * @Groups({"vehicle:show", "ad:show"})
      */
     private $brand;
 
     /**
      * @ORM\Column(type="string", length=50)
      *
-     * @Groups({"vehicle:show"})
+     * @Groups({"vehicle:show", "ad:show"})
      */
     private $model;
 
     /**
      * @ORM\Column(type="string", length=20)
      *
-     * @Groups({"vehicle:show"})
+     * @Groups({"vehicle:show", "ad:show"})
      */
     private $manufacturedYear;
 
     /**
      * @ORM\Column(type="integer")
      *
-     * @Groups({"vehicle:show"})
+     * @Groups({"vehicle:show", "ad:show"})
      */
     private $mileage;
 

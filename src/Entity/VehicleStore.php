@@ -47,42 +47,42 @@ class VehicleStore
     /**
      * @ORM\OneToMany(targetEntity=user::class, mappedBy="vehicleStore")
      *
-     * @Groups({"store:show", "admin_store"})
+     * @Groups({"store:show", "store:admin"})
      */
     private $employers;
 
     /**
      * @ORM\OneToMany(targetEntity=Ad::class, mappedBy="advertiserStore", orphanRemoval=true)
      *
-     * @Groups({"store:show", "admin_store"})
+     * @Groups({"store:show", "store:admin"})
      */
     private $ads;
 
     /**
      * @ORM\Column(type="string", length=15)
      *
-     * @Groups({"store:show"})
+     * @Groups({"store:show", "ad:show"})
      */
     private $phone;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"store:show"})
+     * @Groups({"store:show", "ad:show"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"store:show", "store:index"})
+     * @Groups({"store:show", "store:index", "ad:show"})
      */
     private $name;
 
     /**
      * @ORM\OneToOne(targetEntity=Address::class, mappedBy="vehicleStore", cascade={"persist", "remove"})
      *
-     * @Groups({"store:show", "store:index"})
+     * @Groups({"store:show", "store:index", "ad:show"})
      */
     private $address;
 

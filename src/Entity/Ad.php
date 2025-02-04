@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\AdRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Entity(repositoryClass=AdRepository::class)
@@ -12,6 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class Ad
 {
     public const SERIALIZE_SHOW = 'ad:show';
+    public const SERIALIZE_INDEX = 'ad:index';
 
     /**
      * @ORM\Id
@@ -20,7 +22,7 @@ class Ad
      *
      * @ORM\Column(type="integer")
      *
-     * @Groups({"ad:show"})
+     * @Groups({"ad:show", "ad:index"})
      */
     private $id;
 
@@ -29,7 +31,9 @@ class Ad
      *
      * @ORM\JoinColumn(nullable=false)
      *
-     * @Groups({"ad:show"})
+     * @Groups({"ad:show", "ad:index"})
+     *
+     * @MaxDepth(1)
      */
     private $vehicleAdvertised;
 
@@ -39,6 +43,8 @@ class Ad
      * @ORM\JoinColumn(nullable=false)
      *
      * @Groups({"ad:show"})
+     *
+     * @MaxDepth(1)
      */
     private $advertiserStore;
 
@@ -52,7 +58,7 @@ class Ad
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
      *
-     * @Groups({"ad:show"})
+     * @Groups({"ad:show", "ad:index"})
      */
     private $price;
 
@@ -64,14 +70,14 @@ class Ad
     /**
      * @ORM\Column(type="datetime_immutable")
      *
-     * @Groups({"ad:show"})
+     * @Groups({"ad:show", "ad:index"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime_immutable")
      *
-     * @Groups({"ad:show"})
+     * @Groups({"ad:show", "ad:index"})
      */
     private $updatedAt;
 
